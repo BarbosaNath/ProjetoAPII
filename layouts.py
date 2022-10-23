@@ -1,6 +1,14 @@
 import PySimpleGUI as sg
+from functions import resize
 
 sg.theme("Reddit")
+
+#screen_size = win().winfo_screenwidth(), win().winfo_screenHeight() 
+
+
+bg_left  = [[sg.Image(resize('res/bglphb', .1),pad=(0,0))]]
+bg_right = [[sg.Image(resize('res/bgrphb', .1),pad=(0,0))]]
+
 
 # ---------------------------------------------------------------------------------------
 login = [[sg.Text("Login:", size=(10, 1)),sg.InputText('Login', key='login')],

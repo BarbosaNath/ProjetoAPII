@@ -187,6 +187,29 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "pil-compat"
+version = "1.0.0"
+description = "Compatibility modules, bridging PIL -> Pillow"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pillow = "*"
+
+[[package]]
+name = "pillow"
+version = "9.2.0"
+description = "Python Imaging Library (Fork)"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-issues (>=3.0.1)", "sphinx-removed-in", "sphinxext-opengraph"]
+tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
+
+[[package]]
 name = "pysimplegui"
 version = "4.60.1"
 description = "Python GUIs for Humans. Launched in 2018. It's 2022 & PySimpleGUI is an ACTIVE & supported project. Super-simple to create custom GUI's. 325+ Demo programs & Cookbook for rapid start. Extensive documentation. Main docs at www.PySimpleGUI.org. Fun & your success are the focus. Examples using Machine Learning (GUI, OpenCV Integration), Rainmeter Style Desktop Widgets, Matplotlib + Pyplot, PIL support, add GUI to command line scripts, PDF & Image Viewers. Great for beginners & advanced GUI programmers."
@@ -286,7 +309,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8.0,<3.9"
-content-hash = "4f3760b4e290139ddccda7aaab3cafe5d52b4bec17dd9414b6a3034fbf2f6f1c"
+content-hash = "03aa18c13be3517ce64599f04af348e4aadc8cd5781de4badfc1bed0b8b8b70f"
 
 [metadata.files]
 aiohttp = []
@@ -306,6 +329,8 @@ jinja2 = []
 markupsafe = []
 multidict = []
 numpy = []
+pil-compat = []
+pillow = []
 pysimplegui = []
 replit = []
 requests = []
