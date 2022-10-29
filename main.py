@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 from layouts import login, create_account, main_menu, bg_left, bg_right
-from functions import update_selection
+from database.database import add_to_db
+# from functions import update_selection
 
 sg.theme("Reddit")
 
@@ -14,14 +15,16 @@ layout = [[
     sg.Column(bg_right, key='col-bg_right', pad=(0,0)),
 ]]
 
-window = sg.Window("Login", layout, finalize=True, margins=(0, 0))
+window = sg.Window("Programa Foda", layout, finalize=True, margins=(0, 0))
 # window.maximize()
 
-update_selection(window, 'password', 'Password')
-update_selection(window, 'login', 'Login')
+# update_selection(window, 'password', 'Password')
+# update_selection(window, 'login', 'Login')
 
 while True:
     event, values = window.read()
+    print(event, values)
+         
     if event == sg.WIN_CLOSED or event == "Cancel": break
 
     if event == "proceed_login":
@@ -33,10 +36,18 @@ while True:
 
     if event == "create_account":
         window['col-login'].update(visible=False)
-        
         window['col-bg_right'].update(visible=False)
         window['col-logup'].update(visible=True)
         window['col-bg_right'].update(visible=True)
+      
+        event, values = window.read()
+        add_to_db("database/test.db", "usuario", {
+          "name": values['create_user'],
+          "email": values['create_email'],
+          "password": values['create_password']
+        })
+
+        print("Teste: ",values['create_user'], values['create_email'], values['create_password'])
 
     if "back_to_login" in event:
         window['col-main'].update(visible=False)
@@ -45,5 +56,14 @@ while True:
         window['col-login'].update(visible=True)
         window['col-logup'].update(visible=False)
         window['col-bg_right'].update(visible=True)
+
+    if event == "Criar conta":
+        sg.popup("Conta Criada")
+
+        window['col-login'].update(visible=True)
+        window['col-bg_right'].update(visible=False)
+        window['col-logup'].update(visible=False)
+        window['col-bg_right'].update(visible=True)
+      
 
 window.close()
