@@ -21,9 +21,27 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.commit()
     con.close()
 
+def format_if_string(value):
+    """Format a value to the correct SQL type 'string' if it is a str"""
+    if type(value) == str:
+        return f"'{value}'"
+    else:
+        return str(value)
+
+    # return str(value) if type(value) != str else f"'{value}'"
+
 
 def add_to_db(database_file, table_name, values: dict):
-    """Adicionar ao arquivo de Data Base"""
+    """Adicionar ao arquivo de Data Base
+    add_to_db("foo.db", "bar", {
+        "column1": "value1",
+        "column2": "value2",
+        .
+        .
+        .
+        "columnN": "valueN"
+    })
+    """
 
     # Conecta ao banco de dados
     con = sqlite3.connect(database_file)
@@ -32,17 +50,21 @@ def add_to_db(database_file, table_name, values: dict):
     # Separa o comando em varias partes de forma que a função seja indiferente ao tamanho da tabela
     command_0 = f"INSERT INTO {table_name} ("
     command_1 = ") VALUES ("
+    # INSERT INTO () VALUES (
 
-    # Adiciona à coluna da tabela o valor
+    # Adiciona o valor à coluna da tabela
     for key in list(values.keys())[:-1]:
         command_0 += f"{key}, "
-        command_1 += "{}, ".format(values[key] if type(values[key]) is not str
-                                   else f"'{values[key]}'")
+        command_1 += f"{format_if_str(values[key])}, "
+        # INSERT INTO (column1,  column2, ..., columnN-1, ) VALUES (value1, value2, ..., valueN-1, 
+    
     command_0 += f"{list(values.keys())[-1]}"
-    command_1 += "{}".format(
-        values[list(values.keys())[-1]] if type(values[list(values.keys(
-        ))[-1]]) is not str else f"'{values[list(values.keys())[-1]]}'")
+    command_1 += f"{format_if_str(values[list(values.keys())[-1]])}, "
+
+    # INSERT INTO (column1,  column2, ..., columnN-1, columnN) VALUES (value1, value2, ..., valueN-1, valueN
+    
     command = command_0 + command_1 + ");"
+    # INSERT INTO (column1,  column2, ..., columnN-1, columnN) VALUES (value1, value2, ..., valueN-1, valueN);
 
     # Executa o commando
     cursor.execute(command)
