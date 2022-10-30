@@ -21,7 +21,7 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.commit()
     con.close()
 
-def format_if_string(value):
+def format_if_str(value):
     """Format a value to the correct SQL type 'string' if it is a str"""
     if type(value) == str:
         return f"'{value}'"
@@ -59,7 +59,7 @@ def add_to_db(database_file, table_name, values: dict):
         # INSERT INTO (column1,  column2, ..., columnN-1, ) VALUES (value1, value2, ..., valueN-1, 
     
     command_0 += f"{list(values.keys())[-1]}"
-    command_1 += f"{format_if_str(values[list(values.keys())[-1]])}, "
+    command_1 += f"{format_if_str(values[list(values.keys())[-1]])}"
 
     # INSERT INTO (column1,  column2, ..., columnN-1, columnN) VALUES (value1, value2, ..., valueN-1, valueN
     
@@ -67,6 +67,7 @@ def add_to_db(database_file, table_name, values: dict):
     # INSERT INTO (column1,  column2, ..., columnN-1, columnN) VALUES (value1, value2, ..., valueN-1, valueN);
 
     # Executa o commando
+    print(command)
     cursor.execute(command)
     con.commit()
     con.close()
@@ -78,6 +79,12 @@ create_table("database/test.db", "usuario", [
     "email VARCHAR(100) NOT NULL",
     "password VARCHAR(80) NOT NULL"
 ])
+
+add_to_db("database/test.db", "usuario", {
+             "name": "jose",
+             "email": "jose@email.com",
+             "password": "qwe123"
+         })
 
 #add_to_db("test.db", "usuario", {
 #    "id": 0,
