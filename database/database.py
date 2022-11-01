@@ -21,6 +21,7 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.commit()
     con.close()
 
+
 def format_if_str(value):
     """Format a value to the correct SQL type 'string' if it is a str"""
     if type(value) == str:
@@ -56,13 +57,13 @@ def add_to_db(database_file, table_name, values: dict):
     for key in list(values.keys())[:-1]:
         command_0 += f"{key}, "
         command_1 += f"{format_if_str(values[key])}, "
-        # INSERT INTO (column1,  column2, ..., columnN-1, ) VALUES (value1, value2, ..., valueN-1, 
-    
+        # INSERT INTO (column1,  column2, ..., columnN-1, ) VALUES (value1, value2, ..., valueN-1,
+
     command_0 += f"{list(values.keys())[-1]}"
     command_1 += f"{format_if_str(values[list(values.keys())[-1]])}"
 
     # INSERT INTO (column1,  column2, ..., columnN-1, columnN) VALUES (value1, value2, ..., valueN-1, valueN
-    
+
     command = command_0 + command_1 + ");"
     # INSERT INTO (column1,  column2, ..., columnN-1, columnN) VALUES (value1, value2, ..., valueN-1, valueN);
 
@@ -73,19 +74,56 @@ def add_to_db(database_file, table_name, values: dict):
     con.close()
 
 
-create_table("database/test.db", "usuario", [
-    "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT",
-    "name VARCHAR(60)",
-    "email VARCHAR(100) NOT NULL",
-    "password VARCHAR(80) NOT NULL"
-])
+# create_table("database/test.db", "usuario", [
+#     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT", "name VARCHAR(60)",
+#     "email VARCHAR(100) NOT NULL", "password VARCHAR(80) NOT NULL"
+# ])
+# 
+# add_to_db("database/test.db", "usuario", {
+#     "name": "jose",
+#     "email": "jose@email.com",
+#     "password": "qwe123"
+# })
 
-add_to_db("database/test.db", "usuario", {
-             "name": "jose",
-             "email": "jose@email.com",
-             "password": "qwe123"
-         })
 
+def list_table(database_file, table_name):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+    cursor.execute(f"SELECT * FROM {table_name};")
+    list_fetchall = cursor.fetchall()
+
+    con.close()
+    return list_fetchall
+
+
+def print_table(database_file, table_name):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+    cursor.execute(f"SELECT * FROM {table_name};")
+
+    for i in cursor.fetchall():
+        print("--------------------------")
+        for e in i:
+            print(e, end=" | ")
+        print()
+
+    con.close()
+
+
+def remove_table_line(database_file, table_name, id):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+
+    cursor.execute(f"DELETE FROM {table_name} WHERE id = {id} ")
+
+    con.commit()
+    con.close()
+
+
+remove_table_line("database/test.db", "usuario",0)
+print_table("database/test.db","usuario")
+
+                  
 #add_to_db("test.db", "usuario", {
 #    "id": 0,
 #    "name": "Lanjar",

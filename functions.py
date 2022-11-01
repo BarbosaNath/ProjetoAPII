@@ -25,8 +25,8 @@ def update_selection(canvas, key, text):
 
 def resize(image: str, ratio: float) -> str:
     '''resize and returns an image
-        image: str -> Path to the image (DO NOT INCLUDE THE EXTENSION).
-        ratio: float -> How much do you want to resize. Should be a fraction of 100 (i.e.: 10/100).
+       image: str -> Path to the image (DO NOT INCLUDE THE EXTENSION).
+       ratio: float -> How much do you want to resize. Should be a fraction of 100 (i.e.: 10/100).
         '''
     im = Image.open(image+".png")
     size = int(im.width*ratio), int(im.height*ratio) # calculates what the size of image should be based on the image and ratio provided

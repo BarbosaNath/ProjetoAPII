@@ -1,21 +1,33 @@
 import PySimpleGUI as sg
 from functions import resize
 
+# set the default theme to "Reddit"
 sg.theme("Reddit")
 
-#screen_size = win().winfo_screenwidth(), win().winfo_screenHeight()
 
 bg_left  = [[sg.Image(resize('res/bglphb', .1),pad=(0,0))]]
 bg_right = [[sg.Image(resize('res/bgrphb', .1),pad=(0,0))]]
 
 
 # Login ---------------------------------------------------------------------------------------
-login = [[sg.Text("Usuário:", size=(10, 1)),sg.InputText('', key='login_user')],
-         [sg.Text("Senha:", size=(10, 1)),  sg.InputText('', key='login_password', password_char='•')],
+# X---------------------------------------------X
+# | Usuário: [                                ] |
+# | Senha:   [                                ] |
+# | [Entrar] [Cancelar] [Não possui uma conta?] |
+# X---------------------------------------------X
+login = [[sg.Text("Usuário:", size=(10, 1)), sg.InputText('', key='login_user')],
+         [sg.Text("Senha:"  , size=(10, 1)), sg.InputText('', key='login_password', password_char='•')],
          [sg.Button("Entrar", key='proceed_login', border_width=0, size=(7, 1)),sg.Button("Cancelar", border_width=0, size=(7, 1)),sg.Button("Não possui uma conta?",key='create_account',border_width=0,button_color=('DodgerBlue3', 'white'))]]
 
 
 #Criar conta------------------------------------------------------------------------------------
+# X------------------------------X
+# | Usuário:         [         ] |
+# | E-mail:          [         ] |
+# | Senha:           [         ] |
+# | Confirmar Senha: [         ] |
+# |  [Criar conta]   [Cancelar]  |
+# X------------------------------X
 create_account = [[sg.Text("Usuário:", size=(15, 1)), sg.InputText('', key='create_user')], 
                   [sg.Text("E-mail:", size=(15, 1)),  sg.InputText('', key='create_email')],
                   [sg.Text("Senha:", size=(15, 1)),   sg.InputText('', key='create_password',password_char='•')],
