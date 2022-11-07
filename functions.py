@@ -1,6 +1,6 @@
 # need to install pillow on pip
-import Image # on linux 
-# from PIL import Image # on windows
+# import Image # on linux 
+from PIL import Image # on windows
 
 # unused
 # Não entendo como funciona, so copiei do stack overflow. Ass: Math

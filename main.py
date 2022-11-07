@@ -1,9 +1,8 @@
 import PySimpleGUI as sg
 from layouts import login, create_account, main_menu, bg_left, bg_right
 from debug import Log
+import database.database as db
 # from database.database import add_to_db
-# from functions import update_selection
-
 
 
 sg.theme("Reddit")
@@ -21,9 +20,6 @@ layout = [[
 
 window = sg.Window("Programa Foda", layout, finalize=True, margins=(0, 0))
 # window.maximize()
-
-# update_selection(window, 'password', 'Password')
-# update_selection(window, 'login', 'Login')
 
 while True:
     event, values = window.read()
@@ -46,6 +42,14 @@ while True:
         window['col-bg_right'].update(visible=True)
 
         event, values = window.read()
+
+        db.add_to_db("database/test.db", "usuario", {
+          "name": values['create_user'],
+          "email": values['create_email'],
+          "password": values['create_password']
+        })
+
+        Log("Teste: ",values['create_user'], values['create_email'], values['create_password'])
 
     if "back_to_login" in event:
         window['col-main'].update(visible=False)
