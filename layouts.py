@@ -3,6 +3,7 @@ from functions import resize
 
 # set the default theme to "Reddit"
 sg.theme("Reddit")
+# Debug(sg.theme("DarkGrey2")) # Exemplo de Debug()
 
 
 bg_left  = [[sg.Image(resize('res/bglphb', .1),pad=(0,0))]]

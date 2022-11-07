@@ -1,18 +1,22 @@
 import PySimpleGUI as sg
 from layouts import login, create_account, main_menu, bg_left, bg_right
-from database.database import add_to_db
+from debug import Log
+# from database.database import add_to_db
 # from functions import update_selection
 
+
+
 sg.theme("Reddit")
+# Debug(sg.theme("DarkGrey2")) # Exemplo de Debug()
 
 global_size = (400, 150)
 
 layout = [[
-    sg.Column(bg_left, key='col-bg_left', pad=(0,0)),
+    sg.Column(bg_left, key='col-bg_left', pad=(0, 0)),
     sg.Column(login, s=global_size, key='col-login'),
     sg.Column(create_account, s=global_size, key='col-logup', visible=False),
     sg.Column(main_menu, s=global_size, key='col-main', visible=False),
-    sg.Column(bg_right, key='col-bg_right', pad=(0,0)),
+    sg.Column(bg_right, key='col-bg_right', pad=(0, 0)),
 ]]
 
 window = sg.Window("Programa Foda", layout, finalize=True, margins=(0, 0))
@@ -23,13 +27,14 @@ window = sg.Window("Programa Foda", layout, finalize=True, margins=(0, 0))
 
 while True:
     event, values = window.read()
-    print(event, values)
-         
-    if event == sg.WIN_CLOSED or event == "Cancel": break
+
+    Log(event, values) # Exemplo de Log()
+
+    if event == sg.WIN_CLOSED or event == "Cancelar": break
 
     if event == "proceed_login":
         window['col-login'].update(visible=False)
-        
+
         window['col-bg_right'].update(visible=False)
         window['col-main'].update(visible=True)
         window['col-bg_right'].update(visible=True)
@@ -39,19 +44,12 @@ while True:
         window['col-bg_right'].update(visible=False)
         window['col-logup'].update(visible=True)
         window['col-bg_right'].update(visible=True)
-      
-        event, values = window.read()
-        add_to_db("database/test.db", "usuario", {
-          "name": values['create_user'],
-          "email": values['create_email'],
-          "password": values['create_password']
-        })
 
-        print("Teste: ",values['create_user'], values['create_email'], values['create_password'])
+        event, values = window.read()
 
     if "back_to_login" in event:
         window['col-main'].update(visible=False)
-        
+
         window['col-bg_right'].update(visible=False)
         window['col-login'].update(visible=True)
         window['col-logup'].update(visible=False)
@@ -64,6 +62,5 @@ while True:
         window['col-bg_right'].update(visible=False)
         window['col-logup'].update(visible=False)
         window['col-bg_right'].update(visible=True)
-      
 
 window.close()

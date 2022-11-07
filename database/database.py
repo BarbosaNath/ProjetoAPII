@@ -119,33 +119,33 @@ def remove_table_line(database_file, table_name, id):
     con.commit()
     con.close()
 
-
-remove_table_line("database/test.db", "usuario",0)
-print_table("database/test.db","usuario")
-
-                  
-#add_to_db("test.db", "usuario", {
-#    "id": 0,
-#    "name": "Lanjar",
-#    "email": "Lanjar@hotmail.com",
-#    "password": "12345678"
-#})
-
-#add_to_db("test.db", "usuario", {
-#    "id": 1,
-#    "email": "Jarlan@hotmail.com",
-#    "password": "12345678"
-#})
-
-#print("LISTAR USUÁRIOS")
-#con = sqlite3.connect("test.db")
-#cursor = con.cursor()
-#cursor.execute("SELECT * FROM usuario;")
-#for linha in cursor.fetchall():
-#    print("--------------------------")
-#    print("Id:", linha[0])
-#    print("Nome:", linha[1])
-#    print("Email:", linha[2])
-#    print("Senha:", linha[3])
-#    print("--------------------------")
+if __name__ == "__main__":
+    
+    remove_table_line("database/test.db", "usuario",0)
+    print_table("database/test.db","usuario")
+    
+                      
+    #add_to_db("test.db", "usuario", {
+    #    "id": 0,
+    #    "name": "Lanjar",
+    #    "email": "Lanjar@hotmail.com",
+    #    "password": "12345678"
+    #})
+    
+    add_to_db("database/test.db", "usuario", {
+        "email": "Jarlan@hotmail.com",
+        "password": "12345678"
+    })
+    
+    #print("LISTAR USUÁRIOS")
+    #con = sqlite3.connect("test.db")
+    #cursor = con.cursor()
+    #cursor.execute("SELECT * FROM usuario;")
+    #for linha in cursor.fetchall():
+    #    print("--------------------------")
+    #    print("Id:", linha[0])
+    #    print("Nome:", linha[1])
+    #    print("Email:", linha[2])
+    #    print("Senha:", linha[3])
+    #    print("--------------------------")
 #con.close()
