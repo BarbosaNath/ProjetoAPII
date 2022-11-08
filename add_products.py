@@ -18,15 +18,7 @@ while True:
     
     if event == sg.WIN_CLOSED or event == "cancel": break
 
-    if event == "back":
-        window['col-show'].update(visible=False)
-        window['col-main'].update(visible=True)
-        
-    if event == "show_db":
-        window['col-show'].update(visible=True)
-        window['col-main'].update(visible=False)
-
-    if event == "update":
-        layouts.update_show()
+    if callable(event):
+        event(window)
 
 window.close()
