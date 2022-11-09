@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 from layouts import login, create_account, main_menu, bg_left, bg_right
 from debug import Log
 import database.database as db
+from functions import swap_columns
 # from database.database import add_to_db
 
 
@@ -28,18 +29,12 @@ while True:
 
     if event == sg.WIN_CLOSED or event == "Cancelar": break
 
-    if event == "proceed_login":
-        window['col-login'].update(visible=False)
+    elif event == "proceed_login":
+        swap_columns(window, "col-login", "col-main", "col-bg_right")
 
-        window['col-bg_right'].update(visible=False)
-        window['col-main'].update(visible=True)
-        window['col-bg_right'].update(visible=True)
 
-    if event == "create_account":
-        window['col-login'].update(visible=False)
-        window['col-bg_right'].update(visible=False)
-        window['col-logup'].update(visible=True)
-        window['col-bg_right'].update(visible=True)
+    elif event == "create_account":
+        swap_columns(window, "col-login", "col-logup", "col-bg_right")
 
         event, values = window.read()
 
@@ -51,20 +46,16 @@ while True:
 
         Log("Teste: ",values['create_user'], values['create_email'], values['create_password'])
 
-    if "back_to_login" in event:
-        window['col-main'].update(visible=False)
+    elif "back_to_login" in event:
+        swap_columns(window, "col-main" , "col-login", "col-bg_right")
+        swap_columns(window, "col-logup", "col-login", "col-bg_right")
 
-        window['col-bg_right'].update(visible=False)
-        window['col-login'].update(visible=True)
-        window['col-logup'].update(visible=False)
-        window['col-bg_right'].update(visible=True)
-
-    if event == "Criar conta":
+    elif event == "Criar conta":
         sg.popup("Conta Criada")
 
-        window['col-login'].update(visible=True)
-        window['col-bg_right'].update(visible=False)
-        window['col-logup'].update(visible=False)
-        window['col-bg_right'].update(visible=True)
+        swap_columns(window, "col-logup" , "col-login", "col-bg_right")
+
+    elif callable(event):
+        event(window)
 
 window.close()

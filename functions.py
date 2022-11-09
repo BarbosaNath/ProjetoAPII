@@ -36,7 +36,7 @@ def resize(image: str, ratio: float) -> str:
     im.save(image+"_res.png", "PNG") # image must be saved on drive unfortunately 
     return image+"_res.png" # since the usecase needs a path to the image, then it is provided here
 
-def get_size_reduce(image, ratio) -> tuple:
+def get_size_of_reduction(image, ratio) -> tuple:
     ''' Returns the size of the image provided after the ratio is  applied.
         image: str -> Path to the image (INCLUDE THE EXTENSION).
         ratio: float -> How much do you want to resize. Should be a fraction of 100 (i.e.: 10/100).
@@ -44,3 +44,8 @@ def get_size_reduce(image, ratio) -> tuple:
 
     image = Image.open(image)
     return (int(image.width*ratio), int(image.height*ratio))
+
+def swap_columns(window, column1, column2, column3=None):
+    window[column1].update(visible=False)
+    window[column2].update(visible=True)
+    if column3 is not None: swap_columns(window, column3, column3)
