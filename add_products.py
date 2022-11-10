@@ -20,6 +20,7 @@ while True:
 
     if callable(event):
         event(window)
+
     elif event == "update":
         window.close()
         layout = [[

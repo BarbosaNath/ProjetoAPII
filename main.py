@@ -29,22 +29,11 @@ while True:
 
     if event == sg.WIN_CLOSED or event == "Cancelar": break
 
-    elif event == "proceed_login":
+    elif event == "proceed_login": 
         swap_columns(window, "col-login", "col-main", "col-bg_right")
-
 
     elif event == "create_account":
         swap_columns(window, "col-login", "col-logup", "col-bg_right")
-
-        event, values = window.read()
-
-        db.add_to_db("database/test.db", "usuario", {
-          "name": values['create_user'],
-          "email": values['create_email'],
-          "password": values['create_password']
-        })
-
-        Log("Teste: ",values['create_user'], values['create_email'], values['create_password'])
 
     elif "back_to_login" in event:
         swap_columns(window, "col-main" , "col-login", "col-bg_right")
@@ -54,6 +43,14 @@ while True:
         sg.popup("Conta Criada")
 
         swap_columns(window, "col-logup" , "col-login", "col-bg_right")
+
+        db.add_to_db("database/test.db", "usuario", {
+          "name": values['create_user'],
+          "email": values['create_email'],
+          "password": values['create_password']
+        })
+
+        Log("Teste: ",values['create_user'], values['create_email'], values['create_password'])
 
     elif callable(event):
         event(window)
