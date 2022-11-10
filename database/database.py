@@ -66,14 +66,14 @@ def add_to_db(database_file, table_name, values: dict):
     con.close()
 
 
-def list_table(database_file, table_name):
+def get_table(database_file, table_name):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
     cursor.execute(f"SELECT * FROM {table_name};")
-    list_fetchall = cursor.fetchall()
+    table_values = cursor.fetchall()
 
     con.close()
-    return list_fetchall
+    return table_values
 
 
 def print_table(database_file, table_name):
@@ -89,12 +89,25 @@ def print_table(database_file, table_name):
 
     con.close()
 
+def get_column_details(database_file, table_name):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+    # cursor.execute(f"SELECT name FROM sys.columns WHERE object_id = OBJECT_ID('{table_name}');")
+    # cursor.execute(f"SELECT sql FROM sqlite_master WHERE tbl_name = '{table_name}' AND type = 'table'")
+    cursor.execute(f"PRAGMA table_info('{table_name}');")
 
-def remove_table_line(database_file, table_name, id):
+    column_details = cursor.fetchall()
+    con.close()
+    return column_details
+
+def get_column_names(database_file, table_name):
+    return tuple(details[1] for details in get_column_details(database_file, table_name))
+
+def remove_table_line(database_file, table_name, ID):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
 
-    cursor.execute(f"DELETE FROM {table_name} WHERE id = {id} ")
+    cursor.execute(f"DELETE FROM {table_name} WHERE id = {ID} ")
 
     con.commit()
     con.close()
@@ -119,11 +132,7 @@ if __name__ == "__main__":
         "password VARCHAR(80) NOT NULL"
     ])
     
-    for i in range(5):
-        add_to_db("database/test.db", "usuario", {
-            "name": f"jose{i}",
-            "email": f"jose{i}@email.com",
-            "password": f"{i}"
-        })
+    print(get_column_details("database/test.db", "usuario"))
+    print(get_column_names("database/test.db", "usuario"))
 
-    print_table("database/test.db","usuario")
+    # print_table("database/test.db","usuario")
