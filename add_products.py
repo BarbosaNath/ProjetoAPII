@@ -6,11 +6,11 @@ sg.theme("Reddit")
 global_size = (400, 150)
 
 layout = [[
-    sg.Column(layouts.show, key="col-show", pad=(0,0), visible=False),
-    sg.Column(layouts.main, key="col-main", pad=(0,0))
+    sg.Column(layouts.update_show("col-show"), key="col-show", pad=(0,0), visible=False),
+    sg.Column(layouts.generate_main(), s=(300,300), key="col-main", pad=(0,0))
 ]]
 
-window = sg.Window("Programa Foda", layout, finalize=True, margins=(0, 0))
+window = sg.Window("programa", layout, finalize=False, margins=(0, 0))
 # window.maximize()
 
 while True:
@@ -20,5 +20,12 @@ while True:
 
     if callable(event):
         event(window)
+    elif event == "update":
+        window.close()
+        layout = [[
+            sg.Column(layouts.update_show("col-show"), key="col-show", pad=(0,0)),
+            sg.Column(layouts.generate_main(), s=(300,300), key="col-main", pad=(0,0), visible=False)
+        ]]
+        window = sg.Window("programa", layout, finalize=False, margins=(0,0))
 
 window.close()
