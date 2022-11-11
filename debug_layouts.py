@@ -20,7 +20,7 @@ def generate_main():
 def update_show(column):
     show = []
     
-    for e in db.list_table("database/test.db", "usuario"):
+    for e in db.get_table("database/test.db", "usuario"):
         show.append([])
         for i in e:
             show[len(show)-1].append(sg.Text(f"{i}", size=(7, 1)))
