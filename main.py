@@ -10,23 +10,26 @@ sg.theme("Reddit")
 # Debug(sg.theme("DarkGrey2")) # Exemplo de Debug()
 
 global_size = (400, 150)
-
+   #Separa o layout em colunas para usar em funçoes proprias do pysimplegui
 layout = [[
-    sg.Column(bg_left, key='col-bg_left', pad=(0, 0)),
+    sg.Column(bg_left, key='col-bg_left', pad=(0, 0)), 
     sg.Column(login, s=global_size, key='col-login'),
     sg.Column(create_account, s=global_size, key='col-logup', visible=False),
     sg.Column(main_menu, s=global_size, key='col-main', visible=False),
     sg.Column(bg_right, key='col-bg_right', pad=(0, 0)),
 ]]
 
-window = sg.Window("Programa Foda", layout, finalize=True, margins=(0, 0))
+
+#Iniciando o programa com o titulo de janela, junto com o layout definido anteriomente
+# e com margem 0 para nao ter bordas brancas ao redor da tela
+window = sg.Window("Main Window", layout, finalize=True, margins=(0, 0))
 # window.maximize()
 
 while True:
     event, values = window.read()
 
     Log(event, values) # Exemplo de Log()
-
+# Os proxims if funcionam para trocar as telas utilizando a funçao SwapColumns(functions.py)
     if event == sg.WIN_CLOSED or event == "Cancelar": break
 
     elif event == "proceed_login": 
@@ -51,7 +54,7 @@ while True:
         })
 
         Log("Teste: ",values['create_user'], values['create_email'], values['create_password'])
-
+# Esse elif checa se o evento e uma funçao, caso seja realmente uma funçao ele executa o que e pedido
     elif callable(event):
         event(window)
 
