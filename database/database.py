@@ -103,7 +103,7 @@ def get_column_details(database_file, table_name):
 def get_column_names(database_file, table_name):
     return tuple(details[1] for details in get_column_details(database_file, table_name))
 
-def remove_table_line(database_file, table_name, ID):
+def remove_element(database_file, table_name, ID):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
 
@@ -112,8 +112,7 @@ def remove_table_line(database_file, table_name, ID):
     con.commit()
     con.close()
 
-
-def remove_table_where(database_file, table_name, where):
+def remove_element_where(database_file, table_name, where):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
 
