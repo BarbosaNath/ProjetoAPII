@@ -26,6 +26,18 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.close()
 
 
+def edit_element(database_file, table_name, what, to, where):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+    
+    cursor.execute(f""" UPDATE {table_name}
+                        SET {what} = {to}
+                        WHERE {where};
+                    """)
+
+    con.commit()
+    con.close()
+
 def format_if_str(value):
     """Format a value to the correct SQL type 'string' if it is a str"""
     return str(value) if type(value) != str else f"'{value}'"
@@ -99,9 +111,6 @@ def get_table_as_dict(database_file, table_name, indexer=None):
 
     return table
 
-    
-
-
 
 def print_table(database_file, table_name):
     con = sqlite3.connect(database_file)
@@ -116,6 +125,7 @@ def print_table(database_file, table_name):
 
     con.close()
 
+
 def get_column_details(database_file, table_name):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
@@ -127,8 +137,10 @@ def get_column_details(database_file, table_name):
     con.close()
     return column_details
 
+
 def get_column_names(database_file, table_name):
     return tuple(details[1] for details in get_column_details(database_file, table_name))
+
 
 def remove_element(database_file, table_name, ID):
     con = sqlite3.connect(database_file)
@@ -139,6 +151,7 @@ def remove_element(database_file, table_name, ID):
     con.commit()
     con.close()
 
+
 def remove_element_where(database_file, table_name, where):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
@@ -148,6 +161,7 @@ def remove_element_where(database_file, table_name, where):
     con.commit()
     con.close()
 
+
 create_table("database/test.db", "usuario", [
     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT",
     "name VARCHAR(60)",
@@ -155,13 +169,14 @@ create_table("database/test.db", "usuario", [
     "password VARCHAR(80) NOT NULL"
 ])
 
+
 # __main__ ------------------------------------------------------------------------------
 if __name__ == "__main__":
     # print(get_column_details("database/test.db", "usuario"))
     # print(get_column_names("database/test.db", "usuario"))
     
-    tabela = get_table_as_dict("database/test.db", "usuario", "id")
+    print(get_table_as_dict("database/test.db", "usuario", "id")[11])
 
-    for e in tabela:
-        print(tabela[e])
-    print(tabela[11]['email'])
+    edit_element("database/test.db", "usuario", what="name", to="'Breno'", where="id = 11")
+
+    print(get_table_as_dict("database/test.db", "usuario", "id")[11])
