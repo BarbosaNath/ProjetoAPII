@@ -26,6 +26,22 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.close()
 
 
+def show_all_tables(database_file):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+
+    cursor.execute("""  SELECT name
+                        FROM   sqlite_schema
+                        WHERE  type ='table' AND name NOT LIKE 'sqlite_%';
+                    """)
+
+    all_tables = cursor.fetchall()
+
+    con.close()
+
+    return all_tables
+
+
 def remove_table(database_file, table_name):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
@@ -34,7 +50,6 @@ def remove_table(database_file, table_name):
 
     con.commit()
     con.close()
-
 
 
 def edit_element(database_file, table_name, what, to, where):
@@ -187,4 +202,7 @@ if __name__ == "__main__":
     # print(get_column_details("database/test.db", "usuario"))
     # print(get_column_names("database/test.db", "usuario"
     # print(get_table_as_dict("database/test.db", "usuario", "id"))
+
+    print(show_all_tables("database/test.db"))
+
     pass
