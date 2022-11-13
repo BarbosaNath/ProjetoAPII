@@ -26,6 +26,17 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.close()
 
 
+def remove_table(database_file, table_name):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
+
+    cursor.execute(f"DROP TABLE {table_name};")
+
+    con.commit()
+    con.close()
+
+
+
 def edit_element(database_file, table_name, what, to, where):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
@@ -37,6 +48,7 @@ def edit_element(database_file, table_name, what, to, where):
 
     con.commit()
     con.close()
+
 
 def format_if_str(value):
     """Format a value to the correct SQL type 'string' if it is a str"""
@@ -173,10 +185,6 @@ create_table("database/test.db", "usuario", [
 # __main__ ------------------------------------------------------------------------------
 if __name__ == "__main__":
     # print(get_column_details("database/test.db", "usuario"))
-    # print(get_column_names("database/test.db", "usuario"))
-    
-    print(get_table_as_dict("database/test.db", "usuario", "id")[11])
-
-    edit_element("database/test.db", "usuario", what="name", to="'Breno'", where="id = 11")
-
-    print(get_table_as_dict("database/test.db", "usuario", "id")[11])
+    # print(get_column_names("database/test.db", "usuario"
+    # print(get_table_as_dict("database/test.db", "usuario", "id"))
+    pass
