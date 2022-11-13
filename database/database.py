@@ -76,6 +76,33 @@ def get_table(database_file, table_name):
     return table_values
 
 
+def get_table_as_dict(database_file, table_name, indexer=None):
+    """ Retorna uma lista de dicionarios ou um dicionario de dicionarios.
+        database_file : str -> Caminho para o arquivo de banco de dados
+        table_name    : str -> Nome da tabela que deseja acessar
+        indexer       : str -> Nome da coluna que indexará o dicionario 
+                                    por exemplo, se for passado 'nome' como indexer,
+                                    o programador que for utilizar a tabela acessará 
+                                    determinado elemento da seguinte maneira
+                                    ```tabela['Claudio Junior']['idade']```
+                                    no lugar de ```tabela[0]['idade']```
+                               caso nada seja informado, uma lista de dicionario sera retornada.
+    """
+    table = get_table(database_file, table_name)
+    names = get_column_names(database_file, table_name)
+
+    for i in range(len(table)):
+        table[i] = {names[index]: table[i][index] for index in range(len(table[i]))}
+
+    if indexer is not None:
+        table = {element[indexer]: element for element in table}
+
+    return table
+
+    
+
+
+
 def print_table(database_file, table_name):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
@@ -122,17 +149,20 @@ def remove_table_where(database_file, table_name, where):
     con.commit()
     con.close()
 
+create_table("database/test.db", "usuario", [
+    "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT",
+    "name VARCHAR(60)",
+    "email VARCHAR(100) NOT NULL",
+    "password VARCHAR(80) NOT NULL"
+])
 
 # __main__ ------------------------------------------------------------------------------
 if __name__ == "__main__":
-    create_table("database/test.db", "usuario", [
-        "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT",
-        "name VARCHAR(60)",
-        "email VARCHAR(100) NOT NULL",
-        "password VARCHAR(80) NOT NULL"
-    ])
+    # print(get_column_details("database/test.db", "usuario"))
+    # print(get_column_names("database/test.db", "usuario"))
     
-    print(get_column_details("database/test.db", "usuario"))
-    print(get_column_names("database/test.db", "usuario"))
+    tabela = get_table_as_dict("database/test.db", "usuario", "id")
 
-    # print_table("database/test.db","usuario")
+    for e in tabela:
+        print(tabela[e])
+    print(tabela[11]['email'])
