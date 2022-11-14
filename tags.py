@@ -2,7 +2,7 @@ import database.database as db
     
 
 def get_all_groups():
-    return db.list_all_tables("database/tag_groups.db")
+    return db.get_all_tables("database/tag_groups.db")
 
 
 def create_tag_group(tag_group_name, data):
