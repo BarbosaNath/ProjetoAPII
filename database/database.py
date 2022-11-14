@@ -39,7 +39,7 @@ def get_all_tables(database_file):
 
     con.close()
 
-    return all_tables
+    return [element[0] for element in all_tables]
 
 
 def remove_table(database_file, table_name):
@@ -68,6 +68,10 @@ def edit_element(database_file, table_name, what, to, where):
 def format_if_str(value):
     """Format a value to the correct SQL type 'string' if it is a str"""
     return str(value) if type(value) != str else f"'{value}'"
+
+def reformat_if_str(value):
+    """Format a value in the SQL type 'string' to the python str"""
+    return value if type(value) != str else value.strip("'")
 
 
 def add_to_db(database_file, table_name, values: dict):
@@ -109,10 +113,14 @@ def get_table(database_file, table_name):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
     cursor.execute(f"SELECT * FROM {table_name};")
-    table_values = cursor.fetchall()
+    table_values = [list(values) for values in cursor.fetchall()]
 
     con.close()
-    return table_values
+    for i, values in enumerate(table_values):
+        for j, value in enumerate(values):
+            table_values[i][j] = reformat_if_str(value)
+
+    return [tuple(values) for values in table_values]
 
 
 def get_table_as_dict(database_file, table_name, indexer=None):
@@ -189,7 +197,7 @@ def remove_element_where(database_file, table_name, where):
     con.close()
 
 
-create_table("database/test.db", "usuario", [
+create_table("database/test.db", "usuario3", [
     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT",
     "name VARCHAR(60)",
     "email VARCHAR(100) NOT NULL",
@@ -199,10 +207,15 @@ create_table("database/test.db", "usuario", [
 
 # __main__ ------------------------------------------------------------------------------
 if __name__ == "__main__":
+    db = "database/test.db"
+    tab = "usuario"
     # print(get_column_details("database/test.db", "usuario"))
     # print(get_column_names("database/test.db", "usuario"
     # print(get_table_as_dict("database/test.db", "usuario", "id"))
 
-    print(show_all_tables("database/test.db"))
+    print(f"{get_all_tables(db)             =  }")
+    print(f"{get_table(db, tab)[0]          =  }")
+    print(f"{get_column_details(db, tab)[0:2] =  }")
+    print(f"{get_column_names(db, tab)[0:2]   =  }")
 
     pass
