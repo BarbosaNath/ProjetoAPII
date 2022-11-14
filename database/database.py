@@ -26,7 +26,7 @@ def create_table(database_file, table_name, values, not_exists=True):
     con.close()
 
 
-def list_all_tables(database_file):
+def get_all_tables(database_file):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
 
