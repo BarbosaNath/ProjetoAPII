@@ -1,8 +1,8 @@
 import database.database as db
     
 
-def list_all_groups():
-    db.list_all_tables("database/tag_groups.db")
+def get_all_groups():
+    return db.list_all_tables("database/tag_groups.db")
 
 
 def create_tag_group(tag_group_name, data):
@@ -13,8 +13,8 @@ def remove_tag_group(tag_group_name):
     db.remove_table("database/tag_groups.db", tag_group_name)
 
 
-def list_tag_group(tag_group_name):
-    return db.get_table_as_dict("database/tag_groups.db", tag_group_name)
+def get_tag_group(tag_group_name):
+    return db.get_table("database/tag_groups.db", tag_group_name)
 
 
 def edit_tag_group(tag_group_name, what, to, where):
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     add_tags_to_group("cor", "vermelho")
     add_tags_to_group("cor",     "azul")
 
-    print(list_all_groups())
+    print(get_all_groups())
     
-    print(list_tag_group("tamanho"))
-    print(list_tag_group("cor"))
+    print(get_tag_group("tamanho"))
+    print(get_tag_group("cor"))
