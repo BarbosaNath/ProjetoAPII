@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from functions import resize
+import tags
 
 # set the default theme to "Reddit"
 sg.theme("Reddit")
@@ -22,13 +23,13 @@ login = [[sg.Text("Usuário:", size=(10, 1)), sg.InputText('', key='login_user')
 
 
 #Criar conta------------------------------------------------------------------------------------
-# X------------------------------X
-# | Usuário:         [         ] |
-# | E-mail:          [         ] |
-# | Senha:           [         ] |
-# | Confirmar Senha: [         ] |
-# |  [Criar conta]   [Cancelar]  |
-# X------------------------------X
+# X-----------------------------X
+# | Usuário:         [        ] |
+# | E-mail:          [        ] |
+# | Senha:           [        ] |
+# | Confirmar Senha: [        ] |
+# |  [Criar conta]   [Cancelar] |
+# X-----------------------------X
 create_account = [[sg.Text("Usuário:", size=(15, 1)), sg.InputText('', key='create_user')], 
                   [sg.Text("E-mail:", size=(15, 1)),  sg.InputText('', key='create_email')],
                   [sg.Text("Senha:", size=(15, 1)),   sg.InputText('', key='create_password',password_char='•')],
@@ -36,5 +37,44 @@ create_account = [[sg.Text("Usuário:", size=(15, 1)), sg.InputText('', key='cre
                   [sg.Button("Criar conta", border_width=0),sg.Button("Cancelar",key='back_to_login-A',border_width=0)]]
 
 # ---------------------------------------------------------------------------------------
+#Menu de opções
 main_menu = [[sg.Button("Log out",key='back_to_login-B')],
             [sg.FileBrowse()]]
+
+
+
+# Tela de Cadastro de Produtos -----------------------------------------------------
+# x------------------------------------------x
+# | Tipo do produto:  [                    ] |
+# | Tipos de tags:    [ ] tipo 1  [ ] tipo 2 |
+# |                   [ ] tipo 3  [ ] tipo N |
+# x------------------------------------------x
+
+def register_product():
+    register = [ 
+        [sg.Text("Tipo de Produto: "), sg.InputText('', key='type_product')],
+        [sg.Text("Tipos de tags: ")]
+    ]
+
+    for group in tags.get_all_groups():
+        register.append([sg.Checkbox(group)])
+
+    register.append([sg.Button("Enviar"), sg.Button("Cancelar")])
+
+    return register
+
+if __name__ == "__main__":
+    tags.create_tag_group("forma")
+    tags.create_tag_group("modelo")
+    tags.create_tag_group("sexo")
+    tags.create_tag_group("abc")
+    tags.create_tag_group("def")
+
+
+    window = sg.Window("Teste", register_product())
+
+    while True:
+        event, value = window.read()
+        if event == sg.WIN_CLOSED: break
+    
+    window.close()
