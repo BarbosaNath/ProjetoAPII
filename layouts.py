@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from functions import resize
+from math import ceil
 import tags
 
 # set the default theme to "Reddit"
@@ -51,30 +52,26 @@ main_menu = [[sg.Button("Log out",key='back_to_login-B')],
 # x------------------------------------------x
 
 def register_product():
+    tag_groups = tags.get_all_groups()
     register = [ 
-        [sg.Text("Tipo de Produto: "), sg.InputText('', key='type_product')],
-        [sg.Text("Tipos de tags: ")]
+        [sg.Text("Tipo de Produto:"), sg.InputText('', key='type_product')],
+        [sg.Text("Tipos de tags:")],
     ]
 
-    for group in tags.get_all_groups():
-        register.append([sg.Checkbox(group)])
+    linhas = ceil(len(tag_groups) / 4)
+    for j in range(linhas):
+        register.append([sg.Checkbox(group.replace("_", " ").capitalize(), s=(10,1)) for i, group in enumerate(tag_groups) if i % linhas == j])
+        
 
     register.append([sg.Button("Enviar"), sg.Button("Cancelar")])
 
     return register
 
 if __name__ == "__main__":
-    tags.create_tag_group("forma")
-    tags.create_tag_group("modelo")
-    tags.create_tag_group("sexo")
-    tags.create_tag_group("abc")
-    tags.create_tag_group("def")
-
-
     window = sg.Window("Teste", register_product())
 
     while True:
         event, value = window.read()
-        if event == sg.WIN_CLOSED: break
+        if event == sg.WIN_CLOSED or event == "Cancelar": break
     
     window.close()
