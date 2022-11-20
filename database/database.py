@@ -196,8 +196,16 @@ def remove_element_where(database_file, table_name, where):
     con.commit()
     con.close()
 
+def remove_table_where(database_file, table_name, where):
+    con = sqlite3.connect(database_file)
+    cursor = con.cursor()
 
-create_table("database/test.db", "usuario3", [
+    cursor.execute (f"DELETE FROM {table_name} WHERE {where}")
+
+    con.commit()
+    con.close()
+
+create_table("database/test.db", "usuario", [
     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT",
     "name VARCHAR(60)",
     "email VARCHAR(100) NOT NULL",
