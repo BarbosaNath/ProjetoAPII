@@ -196,11 +196,11 @@ def remove_element_where(database_file, table_name, where):
     con.commit()
     con.close()
 
-def remove_table_where(database_file, table_name, where):
+def drop_table(database_file, table_name):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
 
-    cursor.execute (f"DELETE FROM {table_name} WHERE {where}")
+    cursor.execute (f"DROP TABLE {table_name}")
 
     con.commit()
     con.close()

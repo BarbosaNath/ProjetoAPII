@@ -1,8 +1,5 @@
 # need to install pillow on pip
-try:
-    import Image # on linux
-except ImportError:
-    from PIL import Image # on windows
+from PIL import Image
 
 # unused
 # Não entendo como funciona, so copiei do stack overflow. Ass: Math
