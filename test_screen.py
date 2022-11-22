@@ -94,12 +94,45 @@ cadastro_modulo=[
     [Button('Menu Principal', key='inicio')]
 ]
 
+cadastrar_filtros=[
+    [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
+    [Text('Qual grupos de filtros deseja criar?')],
+    [Text('Grupo:'), sg.Input(s=15)],
+    [sg.Push()],
+    [Text('Defina os filtros a serem ultilizados:')],
+    [Text('Filtro:'), sg.Input(s=15)],
+    [Button('Adicionar')],
+    [sg.Push()],
+    [Button('Criar Grupo', button_color=('white', 'green'))],
+    [sg.Push()],
+    [Button('Menu Principal', key='frente')]
+]
+
+consultar_filtros=[
+    [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
+    [Text('Filtros disponiveis:')],
+    [sg.Combo(
+                tags.get_all_groups(),
+                s=(15, 22),
+                enable_events=True,
+                readonly=True,
+                k='all_tags',
+            ),
+    ],
+    [sg.Push()],
+    [Button('Editar Filtros')],
+    [sg.Push()],
+    [Button('Voltar', key='retornar')]
+]
+
 layout=[
     [Column(tela_inicial, key='tela_inicial', s=(210,500)),
     Column(modulos, key='modulos', s=(210,500), visible=False),
     Column(layout_central, key='col_central'),
     Column(modulo_roupas, key='modulo_roupas', s=(210,500), visible=False),
     Column(cadastro_modulo, key='cadastro_modulo', s=(210,500), visible=False),
+    Column(cadastrar_filtros, key='cadastrar_filtros', s=(210,500), visible=False),
+    Column(consultar_filtros, key='consultar_filtros', s=(210,500), visible=False),
     ]
 ]
 
@@ -127,6 +160,18 @@ while True:
         swap_columns(window,'col_central', 'col_central')
     elif event == 'Voltar':
         swap_columns(window,'modulos', 'tela_inicial')
+        swap_columns(window,'col_central', 'col_central')
+    elif event == 'Cadastrar Filtro':
+        swap_columns(window,'tela_inicial', 'cadastrar_filtros')
+        swap_columns(window,'col_central', 'col_central')
+    elif event == 'frente':
+        swap_columns(window,'cadastrar_filtros', 'tela_inicial')
+        swap_columns(window,'col_central', 'col_central')
+    elif event == 'Consultar Filtros':
+        swap_columns(window,'tela_inicial', 'consultar_filtros')
+        swap_columns(window,'col_central', 'col_central')
+    elif event == 'retornar':
+        swap_columns(window,'consultar_filtros', 'tela_inicial')
         swap_columns(window,'col_central', 'col_central')
     elif event == sg.WIN_CLOSED:
         break
