@@ -2,7 +2,7 @@ from PySimpleGUI import Window, Button, Text, Column, VerticalSeparator
 import PySimpleGUI as sg
 from image_manipulation import resize
 from functions import swap_columns
-import tags
+import tags, products
 
 def gerar_checkboxes(filtros, por_linha):
     checkboxes =[]
@@ -67,23 +67,39 @@ tela_inicial=[  [Text('Bem Vindo!')],
 # | [TipoN]                             |
 # | [Cadastrar novo modulo] [Voltar]    |
 # X-------------------------------------X
-modulos=[   [sg.Image(icone), Button('Log Out', button_color=('white','purple'))],
-            [Text('Qual tipo de produto irá trabalhar?')],
-            [Button('Roupas',           k=lambda window: trocar_tela(window, 'modulos', 'modulo_roupas'))],
+menu_modulos=[   [sg.Image(icone), Button('Log Out', button_color=('white','purple'))],
+            [Text('Qual tipo de produto irá trabalhar?')]
+            ]   
+
+# TODO TODO TODO
+for modulo in productis.get_all_products():
+    menu_modulos.append([Button(modulo.capitalize, k=lambda window: trocar_tela(window, 'modulos', f'modulo_{modulo}'))],
             [Button('Cadastrar modulo', k=lambda window: trocar_tela(window, 'modulos', 'cadastro_modulo')), Button('Voltar',           k=lambda window: trocar_tela(window, 'modulos', 'tela_inicial'), button_color=('white','purple'))],
          ]
 
 
 # TODO: Fazer isso generico
-modulo_roupas=[ [sg.Image(icone), Button('Log Out', button_color=('white','purple'))],
-                [Text('Filtros:', size=(10,1))]
-               ]
+modulos = {}
+for modulo in products.get_all_products():
+    modulos[modulo] = [ [sg.Image(icone), Button('Log Out', button_color=('white','purple'))],
+                        [Text('Filtros:', size=(10,1))]
+                       ]
+    for grupo in tags.get_all_groups():
+        modulos[modulo].append([sg.Text(f'{grupo.capitalize()}: ', s=(8, 1)), 
+                              sg.Combo(tags.get_tag_group(grupo), s=(15, 22), enable_events=True, readonly=True, k=f'combo-{grupo}')])
+    modulos[modulo].append([Button("Pesquisar")])
+    modulos[modulo].append([Button('Menu Principal', k=lambda window: trocar_tela(window, f"modulo_{modulo}", 'modulos'))])
 
-for grupo in tags.get_all_groups():
-    modulo_roupas.append([sg.Text(f'{grupo.capitalize()}: ', s=(8, 1)), 
-                          sg.Combo(tags.get_tag_group(grupo), s=(15, 22), enable_events=True, readonly=True, k=f'combo-{grupo}')])
-modulo_roupas.append([Button("Pesquisar")])
-modulo_roupas.append([Button('Menu Principal', k=lambda window: trocar_tela(window, 'modulo_roupas', 'modulos'))])
+
+#modulo_roupas=[ [sg.Image(icone), Button('Log Out', button_color=('white','purple'))],
+#                [Text('Filtros:', size=(10,1))]
+#               ]
+#
+#for grupo in tags.get_all_groups():
+#    modulo_roupas.append([sg.Text(f'{grupo.capitalize()}: ', s=(8, 1)), 
+#                          sg.Combo(tags.get_tag_group(grupo), s=(15, 22), enable_events=True, readonly=True, k=f'combo-{grupo}')])
+#modulo_roupas.append([Button("Pesquisar")])
+#modulo_roupas.append([Button('Menu Principal', k=lambda window: trocar_tela(window, 'modulo_roupas', 'modulos'))])
 
 
 cadastro_modulo=[   [sg.Image(icone), Button('Log Out', button_color=('white','purple'))],
@@ -119,8 +135,7 @@ consultar_filtros=[ [sg.Image(icone), Button('Log Out', button_color=('white','p
 
 
 layout=[ [  Column(tela_inicial,      k='tela_inicial',      s=(210,500)),
-            Column(modulos,           k='modulos',           s=(210,500), visible=False),
-            Column(modulo_roupas,     k='modulo_roupas',     s=(210,500), visible=False),
+            Column(menu_modulos,      k='modulos',           s=(210,500), visible=False),
             Column(cadastro_modulo,   k='cadastro_modulo',   s=(210,500), visible=False),
             Column(cadastrar_filtros, k='cadastrar_filtros', s=(210,500), visible=False),
             Column(consultar_filtros, k='consultar_filtros', s=(210,500), visible=False),
@@ -128,6 +143,8 @@ layout=[ [  Column(tela_inicial,      k='tela_inicial',      s=(210,500)),
           ]
         ]
 
+for modulo in modulos:
+    layout[0][0].append(Column(modulos[modulo],k=f'modulo_{modulo}', s=(210,500), visible=False))
 
 window = Window('Tela principal', layout=layout)
 
