@@ -14,7 +14,7 @@ layout=[ [  Column(tela_inicial,      k='tela_inicial',      s=(210,500)),
 
 
 for modulo in modulos:
-    layout[0].append(Column(modulos[modulo],k=f'modulo_{modulo}', s=(210,500), visible=False))
+    layout[0].append(Column(modulos[modulo], k=f'modulo_{modulo}', s=(210,500), visible=False))
 
 
 window = Window('Tela principal', layout=layout)
