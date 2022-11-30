@@ -31,10 +31,20 @@ def resize(image: str, ratio: float) -> str:
 def swap_columns(window, column1, column2):
     window[column1].update(visible=False)
     window[column2].update(visible=True)
+
+tela_login=[
+    [sg.Image(filename=resize('icone',0.1)), Text('Seja Bem-Vindo')],
+    [sg.Push()],
+    [sg.Text("Usuário:", size=(10, 1)), sg.InputText('', key='login_user')],
+    [sg.Text("Senha:"  , size=(10, 1)), sg.InputText('', key='login_password', password_char='•')],
+    [sg.Push()],
+    [sg.Button("Entrar", key='proceed_login', border_width=0, size=(7, 1)),sg.Button("Cancelar", border_width=0, size=(7, 1))],
+    [sg.Button("Criar conta", border_width=0, size=(9, 1))]
+]
     
 tela_inicial=[
     [Text('Bem Vindo!')],
-    [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
+    [sg.Image(filename=resize('icone',0.1)), Button('Log Out', key='sair', button_color=('white','purple'))],
     [Button('Produtos')],
     [sg.Push()],
     [Button('Consultar Filtros')],
@@ -133,6 +143,7 @@ layout=[
     Column(cadastro_modulo, key='cadastro_modulo', s=(210,500), visible=False),
     Column(cadastrar_filtros, key='cadastrar_filtros', s=(210,500), visible=False),
     Column(consultar_filtros, key='consultar_filtros', s=(210,500), visible=False),
+    Column(tela_login, key='tela_login', s=(210,500), visible=False),
     ]
 ]
 
@@ -172,6 +183,9 @@ while True:
         swap_columns(window,'col_central', 'col_central')
     elif event == 'retornar':
         swap_columns(window,'consultar_filtros', 'tela_inicial')
+        swap_columns(window,'col_central', 'col_central')
+    elif event == 'sair':
+        swap_columns(window,'tela_inicial', 'tela_login')
         swap_columns(window,'col_central', 'col_central')
     elif event == sg.WIN_CLOSED:
         break
