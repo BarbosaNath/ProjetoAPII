@@ -187,6 +187,10 @@ while True:
     elif event == 'sair':
         swap_columns(window,'tela_inicial', 'tela_login')
         swap_columns(window,'col_central', 'col_central')
+    elif event == 'proceed_login':
+        [sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')],
+        swap_columns(window,'tela_login', 'tela_inicial')
+        swap_columns(window,'col_central', 'col_central')
     elif event == sg.WIN_CLOSED:
         break
 
