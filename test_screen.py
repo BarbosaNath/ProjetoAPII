@@ -2,6 +2,8 @@ from PySimpleGUI import Window, Button, Text, Column, VerticalSeparator
 import PySimpleGUI as sg
 from PIL import Image
 import tags
+import modules as mod
+from functions import swap_columns
 
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
@@ -28,9 +30,7 @@ def resize(image: str, ratio: float) -> str:
     im.save(image+"_res.png", "PNG") # image must be saved on drive unfortunately 
     return image+"_res.png" # since the usecase needs a path to the image, then it is provided here
 
-def swap_columns(window, column1, column2):
-    window[column1].update(visible=False)
-    window[column2].update(visible=True)
+layout_central=[ [VerticalSeparator(),sg.Image(resize('res/logo',.6))] ]
 
 tela_login=[
     [sg.Image(filename=resize('icone',0.1)), Text('Seja Bem-Vindo')],
@@ -52,21 +52,51 @@ tela_inicial=[
     [Button('Cadastrar Filtro')],
 ]
 
-modulos=[
+choose_modules=[
     [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
-    [Text('Qual tipo de produto irá trabalhar?')],
-    [Button('Roupas')],
-    [Button('Cadastrar modulo')],
+    [Text('Qual tipo de produto irá trabalhar?')]]
+
+modules=dict()
+for module in mod.get_all_modules():
+    funcao_foda=lambda window:swap_columns(window,'modulos', f'modulo_{module}', 'col_central')
+    choose_modules.append([Button(module.capitalize(), key=funcao_foda)])
+    funcao_2=lambda window:swap_columns(window, f'modulo_{module}', 'modulos', 'col_central')
+    modules[module]=[
+    [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
     [sg.Push()],
-    [Button('Voltar', button_color=('white','purple'))],
+    [Button(f'Adicionar {module.capitalize()}', k=f'adicionar_{module}')],
+    [Text('Filtros:', size=(10,1))],
+    [sg.Text("Tamanhos:")],
+    [sg.Combo(
+                tags.get_tag_group('tamanho'),
+                s=(15, 22),
+                enable_events=True,
+                readonly=True,
+                k='Tamanho',
+            ),
+    ],
+    [Text('Cores')],
+    [sg.Combo(
+                tags.get_tag_group('cor'),
+                s=(15, 22),
+                enable_events=True,
+                readonly=True,
+                k='Cor',
+            ),
+    ],
+    [sg.Push()],
+    [Button("Pesquisar")],
+    [Button('Menu Principal', key=funcao_2)]
 ]
 
-layout_central=[ [VerticalSeparator(),sg.Image(resize('res/logo',.6))] ]
+choose_modules.append([Button('Cadastrar modulo')])
+choose_modules.append([sg.VPush()])
+choose_modules.append([Button('Voltar', button_color=('white','purple'))])
 
 modulo_roupas=[
     [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
     [sg.Push()],
-    [Button('Adicionar Roupas')],
+    [Button('Adicionar Roupas',k='adicionar_roupas')],
     [Text('Filtros:', size=(10,1)), ],
     [sg.Text("Tamanhos:")],
     [sg.Combo(
@@ -135,17 +165,33 @@ consultar_filtros=[
     [Button('Voltar', key='retornar')]
 ]
 
+adicionar_produtos=[
+    [sg.Image(filename=resize('icone',0.1)), Button('Log Out', button_color=('white','purple'))],
+    [Text('Adicione um produto:')],
+    [sg.Input(s=15)],
+    [sg.Push()],
+    [Text('Atribua filtros a esse produto:')]]
+for group in tags.get_all_groups():
+    adicionar_produtos.append([sg.Text(group.capitalize()+':')])
+    for tag in tags.get_tag_group(group):
+        adicionar_produtos.append([sg.Text(s=2), sg.Checkbox(tag)])
+adicionar_produtos.append([Button('Adicionar')])
+
 layout=[
     [Column(tela_inicial, key='tela_inicial', s=(210,500)),
-    Column(modulos, key='modulos', s=(210,500), visible=False),
+    Column(choose_modules, key='modulos', s=(210,500), visible=False),
     Column(layout_central, key='col_central'),
-    Column(modulo_roupas, key='modulo_roupas', s=(210,500), visible=False),
+    #Column(modulo_roupas, key='modulo_roupas', s=(210,500), visible=False),
     Column(cadastro_modulo, key='cadastro_modulo', s=(210,500), visible=False),
     Column(cadastrar_filtros, key='cadastrar_filtros', s=(210,500), visible=False),
     Column(consultar_filtros, key='consultar_filtros', s=(210,500), visible=False),
     Column(tela_login, key='tela_login', s=(210,500), visible=False),
+    Column(adicionar_produtos, key='adicionar_produtos', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False),
     ]
 ]
+
+for module in modules:
+    layout[0] += [Column(modules[module], key=f'modulo_{module}', s=(210,500), visible=False)]
 
 window = Window(
     'Tela principal',
@@ -155,42 +201,35 @@ window = Window(
 while True:
     event, values = window.read()
     if event == 'Roupas':
-        swap_columns(window,'modulos', 'modulo_roupas')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'modulos', 'modulo_roupas','col_central')
     elif event == 'Menu Principal':
-        swap_columns(window,'modulo_roupas', 'modulos')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'modulo_roupas', 'modulos','col_central')
     elif event == 'Cadastrar modulo':
-        swap_columns(window,'modulos', 'cadastro_modulo')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'modulos', 'cadastro_modulo','col_central')
     elif event == 'inicio':
-        swap_columns(window,'cadastro_modulo', 'modulos')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'cadastro_modulo', 'modulos','col_central')
     elif event == 'Produtos':
-        swap_columns(window,'tela_inicial', 'modulos')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'tela_inicial', 'modulos','col_central')
     elif event == 'Voltar':
-        swap_columns(window,'modulos', 'tela_inicial')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'modulos', 'tela_inicial','col_central')
     elif event == 'Cadastrar Filtro':
-        swap_columns(window,'tela_inicial', 'cadastrar_filtros')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'tela_inicial', 'cadastrar_filtros','col_central')
     elif event == 'frente':
-        swap_columns(window,'cadastrar_filtros', 'tela_inicial')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'cadastrar_filtros', 'tela_inicial','col_central')
     elif event == 'Consultar Filtros':
-        swap_columns(window,'tela_inicial', 'consultar_filtros')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'tela_inicial', 'consultar_filtros','col_central')
     elif event == 'retornar':
-        swap_columns(window,'consultar_filtros', 'tela_inicial')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'consultar_filtros', 'tela_inicial','col_central')
     elif event == 'sair':
-        swap_columns(window,'tela_inicial', 'tela_login')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'tela_inicial', 'tela_login','col_central')
     elif event == 'proceed_login':
         [sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')],
-        swap_columns(window,'tela_login', 'tela_inicial')
-        swap_columns(window,'col_central', 'col_central')
+        swap_columns(window,'tela_login', 'tela_inicial','col_central')
+    elif event == 'adicionar_roupas':
+        swap_columns(window,'modulo_roupas', 'adicionar_produtos','col_central')
+    elif callable(event):
+        event(window)
+
     elif event == sg.WIN_CLOSED:
         break
 
