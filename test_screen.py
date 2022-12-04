@@ -68,7 +68,7 @@ while True:
     elif event == 'sair':
         swap_columns(window,'tela_inicial', 'tela_login','col_central')
     elif event == 'proceed_login':
-        sg.popup('OlÃ¡ (Usuario), Bem-vindo ao Foto Shopping')
+        sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')
         swap_columns(window,'tela_login', 'tela_inicial','col_central')
     elif event == 'adicionar_roupas':
         swap_columns(window,'modulo_roupas', 'adicionar_produtos','col_central')
