@@ -10,7 +10,6 @@ from filters_layouts import *
 from module_layouts import *
 from start_layouts import *
 
-
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
                                         'TEXT':       '#000000',
@@ -25,43 +24,34 @@ sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
 # set the default theme to our own
 sg.theme("FotoShopping")
 
-
-
-
-
-
-
-
 layout=[
-    [Column(tela_inicial, key='tela_inicial', s=(210,500)),
-    Column(choose_modules, key='modulos', s=(210,500), visible=False),
-    Column(layout_central, key='col_central'),
-    #Column(modulo_roupas, key='modulo_roupas', s=(210,500), visible=False),
-    Column(cadastro_modulo, key='cadastro_modulo', s=(210,500), visible=False),
-    Column(cadastrar_filtros, key='cadastrar_filtros', s=(210,500), visible=False),
-    Column(consultar_filtros, key='consultar_filtros', s=(210,500), visible=False),
-    Column(tela_login, key='tela_login', s=(210,500), visible=False),
-    Column(adicionar_produtos, key='adicionar_produtos', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False),
+    [Column(tela_inicial(), key='tela_inicial', s=(210,500)),
+    Column(choose_modules(), key='modulos', s=(210,500), visible=False),
+    Column(layout_central(), key='col_central'),
+    Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
+    Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
+    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False),
+    Column(tela_login(), key='tela_login', s=(210,500), visible=False)
     ]
 ]
+mods = modules()
+prod = adicionar_produtos()
 
-for module in modules:
-    layout[0] += [Column(modules[module], key=f'modulo_{module}', s=(210,500), visible=False)]
+for module in mods:
+    layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
+    layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
 
-window = Window(
-    'Tela principal',
-    layout=layout
-)
+window = Window('Foto Shopping', layout=layout, finalize=True)
 
 while True:
     event, values = window.read()
-    if event == 'Roupas':
+    if event == 'Roupas':             
         swap_columns(window,'modulos', 'modulo_roupas','col_central')
-    elif event == 'Menu Principal':
+    elif event == 'Menu Principal':   
         swap_columns(window,'modulo_roupas', 'modulos','col_central')
-    elif event == 'Cadastrar modulo':
+    elif event == 'Cadastrar modulo': 
         swap_columns(window,'modulos', 'cadastro_modulo','col_central')
-    elif event == 'inicio':
+    elif event == 'inicio':           
         swap_columns(window,'cadastro_modulo', 'modulos','col_central')
     elif event == 'Produtos':
         swap_columns(window,'tela_inicial', 'modulos','col_central')
@@ -78,16 +68,66 @@ while True:
     elif event == 'sair':
         swap_columns(window,'tela_inicial', 'tela_login','col_central')
     elif event == 'proceed_login':
-        [sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')],
+        sg.popup('OlÃ¡ (Usuario), Bem-vindo ao Foto Shopping')
         swap_columns(window,'tela_login', 'tela_inicial','col_central')
     elif event == 'adicionar_roupas':
         swap_columns(window,'modulo_roupas', 'adicionar_produtos','col_central')
+    elif event == 'submit_cadastro_modulo':
+        _tag_groups = ''
+        for group in tags.get_all_groups():
+            if values[f'checkbox_tag_{group}']:
+                _tag_groups += group+" "
+        mod.create_module(values['nome_novo_produto'], _tag_groups)
+
+        layout=[ [
+            Column(tela_inicial(), key='tela_inicial', s=(210,500), visible=False),
+            Column(choose_modules(), key='modulos', s=(210,500), visible=True),
+            Column(layout_central(), key='col_central'),
+            Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
+            Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
+            Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False),
+            Column(tela_login(), key='tela_login', s=(210,500), visible=False),
+        ]]
+
+        mods = modules()
+        prod = adicionar_produtos()
+
+        for module in mods:
+            layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
+            layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
+
+        
+        window.close()
+        window = sg.Window('Foto Shopping', layout=layout, finalize=True)
+
     elif callable(event):
         event(window)
+    elif type(event) == tuple:
+        if event[0] == 'modules_reset_screen':
+            if sg.popup_yes_no('Deseja mesmo excluir?') == "Yes":
+                event[1]()
+
+                layout=[ [
+                    Column(tela_inicial(), key='tela_inicial', s=(210,500), visible=False),
+                    Column(choose_modules(), key='modulos', s=(210,500), visible=True),
+                    Column(layout_central(), key='col_central'),
+                    Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
+                    Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
+                    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False),
+                    Column(tela_login(), key='tela_login', s=(210,500), visible=False),
+                ]]
+
+                mods = modules()
+                prod = adicionar_produtos()
+
+                for module in mods:
+                    layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
+                    layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
+
+                window.close()
+                window = sg.Window('Foto Shopping', layout=layout, finalize=True)
 
     elif event == sg.WIN_CLOSED:
         break
 
 window.close()
-
-#eu sou lindo
