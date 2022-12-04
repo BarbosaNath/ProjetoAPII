@@ -20,74 +20,87 @@ sg.theme("FotoShopping")
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-choose_modules=[
-    gerar_botao_logout('modulos'),
-    [sg.Text('Qual tipo de produto irá trabalhar?')]]
+def choose_modules():
+    _choose_modules=[
+        gerar_botao_logout('modulos'),
+        [sg.Text('Qual tipo de produto irá trabalhar?')]]
+
+    for module in mod.get_all_modules():
+        _choose_modules.append([Botao(module.capitalize(), 'modulos',  f'modulo_{module}'), sg.Push(), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])    
+    _choose_modules.append([sg.Button('Cadastrar modulo', button_color=('white', 'green'))])
+    _choose_modules.append([sg.VPush()])
+    _choose_modules.append([sg.Button('Voltar', button_color=('white','purple'))])
+    return _choose_modules
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-modules=dict()
-for module in mod.get_all_modules():
-    choose_modules.append([Botao(module.capitalize(), 'modulos',  f'modulo_{module}')])
+def modules():
+    _modules=dict()
+    for module in mod.get_all_modules():
+        _modules[module]=[
+        gerar_botao_logout(f'modulo_{module}'),
+        [sg.Push()],
+        [Botao(f'Adicionar {module.capitalize()}', f'modulo_{module}', f'adicionar_produto_{module}')],
+        [sg.Text('Filtros:', size=(10,1))]]
 
-    modules[module]=[
-    gerar_botao_logout(f'modulo_{module}'),
-    [sg.Push()],
-    [sg.Button(f'Adicionar {module.capitalize()}', k=f'adicionar_{module}')],
-    [sg.Text('Filtros:', size=(10,1))],
-    [sg.Text("Tamanhos:")],
-    [sg.Combo(
-                tags.get_tag_group('tamanho'),
-                s=(15, 22),
-                enable_events=True,
-                readonly=True,
-                k='Tamanho',
-            ),
-    ],
-    [sg.Text('Cores')],
-    [sg.Combo(
-                tags.get_tag_group('cor'),
-                s=(15, 22),
-                enable_events=True,
-                readonly=True,
-                k='Cor',
-            ),
-    ],
-    [sg.Push()],
-    [sg.Button("Pesquisar")],
-    [Botao('Menu Principal',  f'modulo_{module}', 'modulos')]
-]
+        for group in tags.get_all_groups():
+            if (group in mod.get_tags(module)):
+                _modules[module] += [ 
+                    [sg.Text(group.replace('_', ' ').capitalize())],
+                    [sg.Combo(
+                        [tag[0].replace('_', ' ').capitalize() for tag in tags.get_tag_group(group)],
+                        s=(15, 22),
+                        enable_events=True,
+                        readonly=True,
+                        )] ]
 
-choose_modules.append([sg.Button('Cadastrar modulo')])
-choose_modules.append([sg.VPush()])
-choose_modules.append([sg.Button('Voltar', button_color=('white','purple'))])
+        _modules[module] += [   [sg.Push()],
+                                [sg.Button("Pesquisar")],
+                                [Botao('Menu Principal',  f'modulo_{module}', 'modulos')]
+                            ]
+    return _modules
+
+# --------------------------------------------------------------------------------------------------------------------------#
+def cadastro_modulo():
+    _cadastro_modulo=[
+        gerar_botao_logout('cadastro_modulo'),
+        [sg.Text('Cadastre o tipo de produto')],
+        [sg.Text('Tipo:'), sg.Input(s=15, key='nome_novo_produto')],
+        [sg.Text('Defina os filtros a serem ultilizados:')]]
+
+    for group in tags.get_all_groups():
+        _cadastro_modulo.append([sg.Checkbox(group.replace('_', ' ').capitalize(), key=f'checkbox_tag_{group}')])
+
+    _cadastro_modulo+=[
+        [sg.Button('Cadastrar filtro')],
+        [sg.VPush()],
+        [sg.Button('Criar', key='submit_cadastro_modulo', button_color=('white', 'green'))],
+        [sg.Button('Menu Principal', key='inicio')]
+    ]
+    return _cadastro_modulo  
+
+# --------------------------------------------------------------------------------------------------------------------------#
+def adicionar_produtos():
+
+    
+    _adicionar_produtos = dict()
+    for module in mod.get_all_modules():
+        _adicionar_produtos[module]=[
+            gerar_botao_logout(f'adicionar_produto_{module}'),
+            [sg.Text(f'Adicione um(a) {module[:-1]}:')],
+            [sg.Input(s=15)],
+            [sg.Push()],
+            [sg.Text('Atribua filtros a esse produto:')]]
+        for group in tags.get_all_groups():
+            _adicionar_produtos[module].append([sg.Text(group.capitalize()+':')])
+            for tag in tags.get_tag_group(group):
+                _adicionar_produtos[module].append([sg.Text(s=2), sg.Checkbox(tag)])
+        _adicionar_produtos[module].append([sg.Button('Adicionar')])
+        
+        _adicionar_produtos[module].append([Botao("Voltar", f"adicionar_produto_{module}", "modulos")])
+        
+    return _adicionar_produtos
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-cadastro_modulo=[
-    gerar_botao_logout('cadastro_modulo'),
-    [sg.Text('Cadastre o tipo de produto')],
-    [sg.Text('Tipo:'), sg.Input(s=15)],
-    [sg.Text('Defina os filtros a serem ultilizados:')],
-    [sg.Checkbox('Tamanhos'), sg.Checkbox('Modelos')],
-    [sg.Checkbox('Cores'), sg.Checkbox('Sexo')],
-    [sg.Button('Cadastrar filtro')],
-    [sg.Push()],
-    [sg.Button('Criar')],
-    [sg.Button('Menu Principal', key='inicio')]
-]
-
-# --------------------------------------------------------------------------------------------------------------------------#
-
-adicionar_produtos=[
-    gerar_botao_logout('adicionar_produtos'),
-    [sg.Text('Adicione um produto:')],
-    [sg.Input(s=15)],
-    [sg.Push()],
-    [sg.Text('Atribua filtros a esse produto:')]]
-for group in tags.get_all_groups():
-    adicionar_produtos.append([sg.Text(group.capitalize()+':')])
-    for tag in tags.get_tag_group(group):
-        adicionar_produtos.append([sg.Text(s=2), sg.Checkbox(tag)])
-adicionar_produtos.append([sg.Button('Adicionar')])
-adicionar_produtos.append([sg.Button("Voltar", key=lambda window: trocar_tela(window, "adicionar_produto", "modulos"))])
+  
