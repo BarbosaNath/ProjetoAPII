@@ -5,6 +5,7 @@ import tags
 import modules as mod
 from functions import *
 from image_manipulation import resize
+import database.database as db
 
 from filters_layouts import *
 from module_layouts import *
@@ -25,13 +26,14 @@ sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
 sg.theme("FotoShopping")
 
 layout=[
-    [Column(tela_inicial(), key='tela_inicial', s=(210,500)),
+    [Column(tela_login(), key='tela_login', s=(210,500), visible=True),
+    Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
     Column(choose_modules(), key='modulos', s=(210,500), visible=False),
-    Column(layout_central(), key='col_central'),
     Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
     Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False),
-    Column(tela_login(), key='tela_login', s=(210,500), visible=False)
+    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False), 
+    Column(create_acc(), key='create_acc', s=(210,500), visible=False),
+    Column(layout_central(), key='col_central')
     ]
 ]
 mods = modules()
@@ -45,6 +47,9 @@ window = Window('Foto Shopping', layout=layout, finalize=True)
 
 while True:
     event, values = window.read()
+
+    if event == sg.WIN_CLOSED or event == "buton_cancel_login": break
+
     if event == 'Roupas':             
         swap_columns(window,'modulos', 'modulo_roupas','col_central')
     elif event == 'Menu Principal':   
@@ -68,10 +73,21 @@ while True:
     elif event == 'sair':
         swap_columns(window,'tela_inicial', 'tela_login','col_central')
     elif event == 'proceed_login':
-        sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')
-        swap_columns(window,'tela_login', 'tela_inicial','col_central')
+        dados_login = db.get_table('database/test.db', 'usuario')
+
+        for datun in dados_login:
+            if datun[1] == values['login_user']:
+                if datun[2] == values['login_password']:
+                    sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')
+                    swap_columns(window,'tela_login', 'tela_inicial','col_central')
+                    break
+        else:        
+            sg.popup('Esta conta não existe!')
+
     elif event == 'adicionar_roupas':
         swap_columns(window,'modulo_roupas', 'adicionar_produtos','col_central')
+    elif event == 'button_create_acc':
+        swap_columns(window,'tela_login', 'create_acc','col_central')
     elif event == 'submit_cadastro_modulo':
         _tag_groups = ''
         for group in tags.get_all_groups():
@@ -79,15 +95,17 @@ while True:
                 _tag_groups += group+" "
         mod.create_module(values['nome_novo_produto'], _tag_groups)
 
-        layout=[ [
-            Column(tela_inicial(), key='tela_inicial', s=(210,500), visible=False),
-            Column(choose_modules(), key='modulos', s=(210,500), visible=True),
-            Column(layout_central(), key='col_central'),
-            Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
-            Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-            Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False),
-            Column(tela_login(), key='tela_login', s=(210,500), visible=False),
-        ]]
+        layout=[
+        [Column(tela_login(), key='tela_login', s=(210,500), visible=False),
+        Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
+        Column(choose_modules(), key='modulos', s=(210,500), visible=True),
+        Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
+        Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
+        Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False), 
+        Column(create_acc(), key='create_acc', s=(210,500), visible=False),
+        Column(layout_central(), key='col_central')
+        ]
+]
 
         mods = modules()
         prod = adicionar_produtos()
@@ -107,15 +125,18 @@ while True:
             if sg.popup_yes_no('Deseja mesmo excluir?') == "Yes":
                 event[1]()
 
-                layout=[ [
-                    Column(tela_inicial(), key='tela_inicial', s=(210,500), visible=False),
-                    Column(choose_modules(), key='modulos', s=(210,500), visible=True),
-                    Column(layout_central(), key='col_central'),
-                    Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
-                    Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-                    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False),
-                    Column(tela_login(), key='tela_login', s=(210,500), visible=False),
-                ]]
+                layout=[
+        [Column(tela_login(), key='tela_login', s=(210,500), visible=False),
+        Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
+        Column(choose_modules(), key='modulos', s=(210,500), visible=True),
+        Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
+        Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
+        Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False), 
+        Column(create_acc(), key='create_acc', s=(210,500), visible=False),
+        Column(layout_central(), key='col_central')
+        ]
+]
+
 
                 mods = modules()
                 prod = adicionar_produtos()
@@ -127,7 +148,17 @@ while True:
                 window.close()
                 window = sg.Window('Foto Shopping', layout=layout, finalize=True)
 
-    elif event == sg.WIN_CLOSED:
-        break
+    elif event == "submit_create_acc":
+        sg.popup("Conta Criada")
+
+        swap_columns(window, "create_acc" , "tela_login", "col_central")
+
+        db.add_to_db("database/test.db", "usuario", {
+            "user": values['create_user'],
+            "password": values['create_password']
+        })
+    
+    elif event == "cancel_submit_create_acc":
+        swap_columns(window, "create_acc" , "tela_login", "col_central")
 
 window.close()
