@@ -78,7 +78,7 @@ while True:
         for datun in dados_login:
             if datun[1] == values['login_user']:
                 if datun[2] == values['login_password']:
-                    sg.popup('Olá (Usuario), Bem-vindo ao Foto Shopping')
+                    sg.popup('Olá {}, bem-vindo ao Foto Shopping'.format(values['login_user']))
                     swap_columns(window,'tela_login', 'tela_inicial','col_central')
                     break
         else:        
