@@ -23,20 +23,19 @@ sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
 # set the default theme to our own
 sg.theme("FotoShopping")
 
-def loading():
-    sg.popup_no_buttons('Carregando...', auto_close = True, auto_close_duration = .4,
+loading = lambda: sg.popup_no_buttons('Carregando...', auto_close = True, auto_close_duration = .4,
                                                         no_titlebar = True, keep_on_top = True, non_blocking=True)
 
 def generate_layout(first_screen):
     layout=[ [
-            Column(tela_login(), key='tela_login', s=(210,500), visible=False),
-            Column(tela_inicial(), key='tela_inicial', visible=True, s=(210,500)),
-            Column(choose_modules(), key='modulos', s=(210,500), visible=False),
-            Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
-            Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-            Column(filtros(), key='consultar_filtros', s=(210,500), scrollable=True, vertical_scroll_only=True, visible=False), 
-            Column(create_acc(), key='create_acc', s=(210,500), visible=False),
-            Column(layout_central(), key='col_central', visible=True)
+            Column(tela_login(),        key='tela_login',        s=(210,500), visible=first_screen=="tela_login"       ),
+            Column(tela_inicial(),      key='tela_inicial',      s=(210,500), visible=first_screen=="tela_inicial"     ),
+            Column(choose_modules(),    key='modulos',           s=(210,500), visible=first_screen=="modulos"           ),
+            Column(cadastro_modulo(),   key='cadastro_modulo',   s=(210,500), visible=first_screen=="cadastro_modulo"  ),
+            Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=first_screen=="cadastrar_filtros"),
+            Column(filtros(),           key='consultar_filtros', s=(210,500), visible=first_screen=="consultar_filtros", scrollable=True, vertical_scroll_only=True), 
+            Column(create_acc(),        key='create_acc',        s=(210,500), visible=first_screen=="create_acc"       ),
+            Column(layout_central(),    key='col_central',                    visible=True)
         ]
     ]
     mods = modules()
@@ -49,7 +48,7 @@ def generate_layout(first_screen):
     return layout
 
 loading()
-window = Window('Foto Shopping', generate_layout(""), finalize=True)
+window = Window('Foto Shopping', generate_layout("tela_inicial"), finalize=True)
 window.bring_to_front()
 
 while True:
@@ -102,29 +101,10 @@ while True:
                 _tag_groups += group+" "
         mod.create_module(values['nome_novo_produto'], _tag_groups)
 
-        layout=[
-        [Column(tela_login(), key='tela_login', s=(210,500), visible=False),
-        Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
-        Column(choose_modules(), key='modulos', s=(210,500), visible=True),
-        Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
-        Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-        Column(filtros(), key='consultar_filtros', s=(210,500), scrollable=True, vertical_scroll_only=True, visible=False), 
-        Column(create_acc(), key='create_acc', s=(210,500), visible=False),
-        Column(layout_central(), key='col_central')
-        ]
-]
-
-        mods = modules()
-        prod = adicionar_produtos()
-
-        for module in mods:
-            layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
-            layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
-
         
         loading()
         window.close()
-        window = sg.Window('Foto Shopping', layout=layout, finalize=True)
+        window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
         window.bring_to_front()
 
     elif callable(event):
@@ -134,29 +114,9 @@ while True:
             if sg.popup_yes_no('Deseja mesmo excluir?') == "Yes":
                 event[1]()
 
-                layout=[
-                    [Column(tela_login(), key='tela_login', s=(210,500), visible=False),
-                    Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
-                    Column(choose_modules(), key='modulos', s=(210,500), visible=True),
-                    Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
-                    Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-                    Column(filtros(), key='consultar_filtros', s=(210,500), scrollable=True, vertical_scroll_only=True, visible=False), 
-                    Column(create_acc(), key='create_acc', s=(210,500), visible=False),
-                    Column(layout_central(), key='col_central')
-                    ]
-                ]
-
-
-                mods = modules()
-                prod = adicionar_produtos()
-
-                for module in mods:
-                    layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
-                    layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
-
                 loading()
                 window.close()
-                window = sg.Window('Foto Shopping', layout=layout, finalize=True)
+                window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
                 window.bring_to_front()
 
         elif event[0] == "button_add_product":
