@@ -81,21 +81,23 @@ def cadastro_modulo():
 
 # --------------------------------------------------------------------------------------------------------------------------#
 def adicionar_produtos():
-
-    
     _adicionar_produtos = dict()
     for module in mod.get_all_modules():
         _adicionar_produtos[module]=[
             gerar_botao_logout(f'adicionar_produto_{module}'),
-            [sg.Text(f'Adicione um(a) {module[:-1]}:')],
-            [sg.Input(s=15)],
-            [sg.Push()],
+            [sg.Text(f'Adicione {module}:')],
+            [sg.Text('Codigo:'), sg.Input(key="product_code")],
+            [sg.Text('Foto:'), sg.FileBrowse(key="file_image")],
+            [sg.Text('Estoque:'), sg.Input(key="product_inventory")],
+            [sg.VPush()],
             [sg.Text('Atribua filtros a esse produto:')]]
         for group in tags.get_all_groups():
-            _adicionar_produtos[module].append([sg.Text(group.capitalize()+':')])
-            for tag in tags.get_tag_group(group):
-                _adicionar_produtos[module].append([sg.Text(s=2), sg.Checkbox(tag)])
-        _adicionar_produtos[module].append([sg.Button('Adicionar')])
+            if group in mod.get_tags(module):
+                _adicionar_produtos[module].append([sg.Text(group.capitalize()+':')])
+                for tag in tags.get_tag_group(group):
+                    tag=tag[0]
+                    _adicionar_produtos[module].append([sg.Text(s=2), sg.Checkbox(tag.replace('_', " ").capitalize(), key=f"checkbox_cadastro_{module}_{group}_{tag}")])
+        _adicionar_produtos[module].append([sg.Button('Adicionar', key=("button_add_product", module))])
         
         _adicionar_produtos[module].append([Botao("Voltar", f"adicionar_produto_{module}", "modulos")])
         

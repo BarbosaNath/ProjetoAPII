@@ -126,16 +126,16 @@ while True:
                 event[1]()
 
                 layout=[
-        [Column(tela_login(), key='tela_login', s=(210,500), visible=False),
-        Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
-        Column(choose_modules(), key='modulos', s=(210,500), visible=True),
-        Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
-        Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-        Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False), 
-        Column(create_acc(), key='create_acc', s=(210,500), visible=False),
-        Column(layout_central(), key='col_central')
-        ]
-]
+                    [Column(tela_login(), key='tela_login', s=(210,500), visible=False),
+                    Column(tela_inicial(), key='tela_inicial', visible=False, s=(210,500)),
+                    Column(choose_modules(), key='modulos', s=(210,500), visible=True),
+                    Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
+                    Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
+                    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False), 
+                    Column(create_acc(), key='create_acc', s=(210,500), visible=False),
+                    Column(layout_central(), key='col_central')
+                    ]
+                ]
 
 
                 mods = modules()
@@ -147,6 +147,23 @@ while True:
 
                 window.close()
                 window = sg.Window('Foto Shopping', layout=layout, finalize=True)
+        elif event[0] == "button_add_product":
+            dados = {
+                "code": values["product_code"],
+                "image": values["file_image"],
+                "tags": "",
+                "inventory": int(values["product_inventory"])
+            }
+
+            for group in mod.get_tags(event[1]):
+                for tag in tags.get_tag_group(group):
+                    tag = tag[0]
+                    if values[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]:
+                        dados["tags"] += f"{group}->{tag} "
+
+
+            db.add_to_db("database/modules.db", event[1], dados)
+            swap_columns(window, f'modulo_{event[1]}', "modulos", "col_central")
 
     elif event == "submit_create_acc":
         sg.popup("Conta Criada")

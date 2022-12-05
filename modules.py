@@ -50,6 +50,6 @@ def change_inventory(module_name, code, inventory):
 
 
 if __name__ == '__main__':
-    create_module('roupas', 'tamanho cor tipo_roupa')
-    create_module('perfumes', 'fragancia genero ml')
-    create_module('esmaltes', 'marca cor ml')
+    create_module('roupas', 'tamanho cor')
+    create_module('perfumes', 'tamanho')
+    create_module('esmaltes', 'cor')
