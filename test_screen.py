@@ -1,12 +1,9 @@
-from PySimpleGUI import Window, Button, Text, Column, VerticalSeparator
+from PySimpleGUI import Window, Column
 import PySimpleGUI as sg
-from PIL import Image
 import tags
 import modules as mod
 from functions import *
-from image_manipulation import resize
 import database.database as db
-import asyncio
 
 from filters_layouts import *
 from module_layouts import *
