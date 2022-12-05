@@ -18,16 +18,18 @@ sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
 sg.theme("FotoShopping")
 
 def filtros():
-    return [
+    _filtros = [
         gerar_botao_logout('col_filtros'),
-        [sg.Button('Cadastrar filtro', button_color=('white','green'))],
-        [sg.Button('Editar filtro', button_color=('white','blue'))],
-        [sg.Button('Consultar filtro', button_color=('white','pink'))],
-        [sg.Button('Excluir filtro', button_color=('white','red'))],
-        [sg.VPush()],
-        [sg.Button('Voltar')],
-        [sg.Button('Menu Principal')],
+        [sg.Text('Filtros disponiveis:')]
     ]
+
+    for group in tags.get_all_groups():
+        _filtros.append([sg.Text(group.capitalize()), sg.Push(), sg.Button('✏️'), sg.Button('❌', button_color=('white', 'darkred'))])
+        for tag in tags.get_tag_group(group):
+            tag=tag[0]
+            _filtros.append([sg.Text('     '+tag.capitalize(), s=10), sg.Push(), sg.Button('✏️'), sg.Button('❌', button_color=('white', 'darkred'))])
+    _filtros.append([sg.Button('Voltar')])
+    return _filtros
 
 # --------------------------------------------------------------------------------------------------------------------------#
 

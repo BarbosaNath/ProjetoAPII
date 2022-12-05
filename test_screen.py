@@ -31,7 +31,7 @@ layout=[
     Column(choose_modules(), key='modulos', s=(210,500), visible=False),
     Column(cadastro_modulo(), key='cadastro_modulo', s=(210,500), visible=False),
     Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=False),
-    Column(consultar_filtros(), key='consultar_filtros', s=(210,500), visible=False), 
+    Column(filtros(), key='consultar_filtros', s=(210,500), scrollable=True, vertical_scroll_only=True, visible=False), 
     Column(create_acc(), key='create_acc', s=(210,500), visible=False),
     Column(layout_central(), key='col_central')
     ]
