@@ -19,7 +19,7 @@ sg.theme("FotoShopping")
 
 def filtros():
     _filtros = [
-        gerar_botao_logout('col_filtros'),
+        gerar_botao_logout('consultar_filtros'),
         [sg.Text('Filtros disponiveis:')]
     ]
 

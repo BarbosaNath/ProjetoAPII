@@ -1,7 +1,8 @@
 # Quando for importar, importar ```import image_manipulation as img```
-from PIL import Image
+from PIL import Image, ImageFile
 import os
 from math import ceil
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # eu so queria que tivesse um overload de verdade no python T-T
 def resize(path, size, size_=None) -> str: 

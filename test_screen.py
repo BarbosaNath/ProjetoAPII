@@ -1,13 +1,14 @@
-from PySimpleGUI import Window, Column
+from   PySimpleGUI import Window, Column
 import PySimpleGUI as sg
 import tags
 import modules as mod
-from functions import *
+from   functions import *
 import database.database as db
 
 from filters_layouts import *
-from module_layouts import *
-from start_layouts import *
+from module_layouts  import *
+from start_layouts   import *
+
 
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
@@ -32,12 +33,13 @@ def generate_layout(first_screen):
             Column(tela_inicial(),      key='tela_inicial',      s=(210,500), visible=first_screen=="tela_inicial"     ),
             Column(choose_modules(),    key='modulos',           s=(210,500), visible=first_screen=="modulos"           ),
             Column(cadastro_modulo(),   key='cadastro_modulo',   s=(210,500), visible=first_screen=="cadastro_modulo"  ),
-            Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=first_screen=="cadastrar_filtros"),
+            # Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=first_screen=="cadastrar_filtros"),
             Column(filtros(),           key='consultar_filtros', s=(210,500), visible=first_screen=="consultar_filtros", scrollable=True, vertical_scroll_only=True), 
             Column(create_acc(),        key='create_acc',        s=(210,500), visible=first_screen=="create_acc"       ),
             Column(layout_central(),    key='col_central',                    visible=True)
         ]
     ]
+
     mods = modules()
     prod = adicionar_produtos()
 

@@ -1,8 +1,9 @@
 import PySimpleGUI as sg
-from image_manipulation import resize
-from functions import *
 import modules as mod
 import tags
+from math import floor
+from image_manipulation import resize
+from functions import *
 
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
@@ -33,7 +34,27 @@ def choose_modules():
     return _choose_modules
 
 # --------------------------------------------------------------------------------------------------------------------------#
+def show_images(module, tags=None):
+    def image_layout(module, tags=None):
+        _images = [[]]
+        products = mod.get_module(module).values()
+        contador = 0
+        for product in products:
+            code, image, _, inventory = product.values()
+            _images[floor(contador // 3)].append(
+                                    sg.Column([
+                                        [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
+                                        [sg.Checkbox(code), sg.Text(inventory)],
+                                        ]))
+            contador += 1
+            if contador % 3 == 0:
+                _images.append([])
 
+        return _images if _images != [] else [[]]
+    return image_layout(module, tags)
+
+
+# --------------------------------------------------------------------------------------------------------------------------#
 def modules():
     _modules=dict()
     for module in mod.get_all_modules():
@@ -106,3 +127,7 @@ def adicionar_produtos():
 # --------------------------------------------------------------------------------------------------------------------------#
 
   
+if __name__ == "__main__":
+    window = sg.Window("teste", [[sg.Column(show_images("roupas"), scrollable=True, vertical_scroll_only=True, s=(510,500))]], finalize=True)
+    window.read()
+    window.close()

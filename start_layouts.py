@@ -30,7 +30,7 @@ def tela_inicial():
         [sg.Image(filename=resize('icone.png',0.1)), sg.Button('Log Out', key='sair', button_color=('white','purple'))],
         [sg.Button('Produtos')],
         [sg.Button('Consultar Filtros')],
-        [sg.Button('Cadastrar Filtro')],
+        # [sg.Button('Cadastrar Filtro')],
     ]
 #-------------------------------------------------------------------------------------------------------
 def layout_central():
