@@ -34,8 +34,8 @@ def choose_modules():
     return _choose_modules
 
 # --------------------------------------------------------------------------------------------------------------------------#
-def show_images(module, tags=None):
-    def image_layout(module, tags=None):
+def show_images(module):
+    def image_layout(module):
         _images = [[]]
         products = mod.get_module(module).values()
         contador = 0
@@ -51,7 +51,7 @@ def show_images(module, tags=None):
                 _images.append([])
 
         return _images if _images != [] else [[]]
-    return image_layout(module, tags)
+    return image_layout(module)
 
 
 # --------------------------------------------------------------------------------------------------------------------------#
@@ -108,7 +108,7 @@ def adicionar_produtos():
             gerar_botao_logout(f'adicionar_produto_{module}'),
             [sg.Text(f'Adicione {module}:')],
             [sg.Text('Codigo:'), sg.Input(key="product_code")],
-            [sg.Text('Foto:'), sg.FileBrowse(key="file_image")],
+            [sg.Text('Foto:'), sg.FileBrowse("Imagem", key="file_image")],
             [sg.Text('Estoque:'), sg.Input(key="product_inventory")],
             [sg.VPush()],
             [sg.Text('Atribua filtros a esse produto:')]]

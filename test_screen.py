@@ -44,6 +44,7 @@ def generate_layout(first_screen):
     prod = adicionar_produtos()
 
     for module in mods:
+        # layout[0] += [Column(show_images(module), key=f'imagens_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
         layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
         layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
 
@@ -58,44 +59,31 @@ while True:
 
     if event == sg.WIN_CLOSED or event == "buton_cancel_login": break
 
-    if event == 'Roupas':             
-        swap_columns(window,'modulos', 'modulo_roupas','col_central')
-    elif event == 'Menu Principal':   
-        swap_columns(window,'modulo_roupas', 'modulos','col_central')
-    elif event == 'Cadastrar modulo': 
-        swap_columns(window,'modulos', 'cadastro_modulo','col_central')
-    elif event == 'inicio':           
-        swap_columns(window,'cadastro_modulo', 'modulos','col_central')
-    elif event == 'Produtos':
-        swap_columns(window,'tela_inicial', 'modulos','col_central')
-    elif event == 'Voltar':
-        swap_columns(window,'modulos', 'tela_inicial','col_central')
-    elif event == 'Cadastrar Filtro':
-        swap_columns(window,'tela_inicial', 'cadastrar_filtros','col_central')
-    elif event == 'frente':
-        swap_columns(window,'cadastrar_filtros', 'tela_inicial','col_central')
-    elif event == 'Consultar Filtros':
-        swap_columns(window,'tela_inicial', 'consultar_filtros','col_central')
-    elif event == 'retornar':
-        swap_columns(window,'consultar_filtros', 'tela_inicial','col_central')
-    elif event == 'sair':
-        swap_columns(window,'tela_inicial', 'tela_login','col_central')
+    if   event == 'Cadastrar modulo':         swap_screens(window, 'modulos',           'cadastro_modulo')
+    elif event == 'inicio':                   swap_screens(window, 'cadastro_modulo',   'modulos')
+    elif event == 'Produtos':                 swap_screens(window, 'tela_inicial',      'modulos')
+    elif event == 'Voltar':                   swap_screens(window, 'modulos',           'tela_inicial')
+    elif event == 'Cadastrar Filtro':         swap_screens(window, 'tela_inicial',      'cadastrar_filtros')
+    elif event == 'frente':                   swap_screens(window, 'cadastrar_filtros', 'tela_inicial')
+    elif event == 'Consultar Filtros':        swap_screens(window, 'tela_inicial',      'consultar_filtros')
+    elif event == 'retornar':                 swap_screens(window, 'consultar_filtros', 'tela_inicial')
+    elif event == 'sair':                     swap_screens(window, 'tela_inicial',      'tela_login')
+    elif event == 'adicionar_roupas':         swap_screens(window, 'modulo_roupas',     'adicionar_produtos')
+    elif event == 'button_create_acc':        swap_screens(window, 'tela_login',        'create_acc')
+    elif event == 'cancel_submit_create_acc': swap_screens(window, 'create_acc' ,       'tela_login')
+
     elif event == 'proceed_login':
         dados_login = db.get_table('database/test.db', 'usuario')
 
-        for datun in dados_login:
-            if datun[1] == values['login_user']:
-                if datun[2] == values['login_password']:
-                    sg.popup('Olá {}, bem-vindo ao Foto Shopping'.format(values['login_user']))
-                    swap_columns(window,'tela_login', 'tela_inicial','col_central')
-                    break
+        for datum in dados_login:
+            if datum[1] == values['login_user'] and datum[2] == values['login_password']:
+                sg.popup('Olá {}, bem-vindo ao Foto Shopping'.format(values['login_user']))
+                swap_columns(window,'tela_login', 'tela_inicial','col_central')
+                break
         else:        
             sg.popup('Esta conta não existe!')
 
-    elif event == 'adicionar_roupas':
-        swap_columns(window,'modulo_roupas', 'adicionar_produtos','col_central')
-    elif event == 'button_create_acc':
-        swap_columns(window,'tela_login', 'create_acc','col_central')
+
     elif event == 'submit_cadastro_modulo':
         _tag_groups = ''
         for group in tags.get_all_groups():
@@ -109,17 +97,18 @@ while True:
         window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
         window.bring_to_front()
 
-    elif callable(event):
-        event(window)
+
     elif type(event) == tuple:
         if event[0] == 'modules_reset_screen':
-            if sg.popup_yes_no('Deseja mesmo excluir?') == "Yes":
-                event[1]()
+            if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
 
-                loading()
-                window.close()
-                window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
-                window.bring_to_front()
+            event[1]()
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
+            window.bring_to_front()
+
 
         elif event[0] == "button_add_product":
             dados = {
@@ -134,10 +123,18 @@ while True:
                     tag = tag[0]
                     if values[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]:
                         dados["tags"] += f"{group}->{tag} "
+                        window[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]('')
 
 
             db.add_to_db("database/modules.db", event[1], dados)
-            swap_columns(window, f'modulo_{event[1]}', "modulos", "col_central")
+            swap_columns(window, f"adicionar_produto_{event[1]}", f"modulo_{event[1]}", "col_central")
+
+
+            window['product_code']('')
+            window["file_image"].InitialFolder = r"C:\\"
+            window["file_image"]('Imagem')
+            window['product_inventory']('')
+            
 
     elif event == "submit_create_acc":
         sg.popup("Conta Criada")
@@ -148,8 +145,9 @@ while True:
             "user": values['create_user'],
             "password": values['create_password']
         })
+        
+
+    elif callable(event): event(window)
     
-    elif event == "cancel_submit_create_acc":
-        swap_columns(window, "create_acc" , "tela_login", "col_central")
 
 window.close()
