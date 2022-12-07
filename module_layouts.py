@@ -27,7 +27,7 @@ def choose_modules():
         [sg.Text('Qual tipo de produto irá trabalhar?')]]
 
     for module in mod.get_all_modules():
-        _choose_modules.append([Botao(module.capitalize(), 'modulos',  f'modulo_{module}'), sg.Push(), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])    
+        _choose_modules.append([sg.Button(module.capitalize(), k=("modulo_escolhido", module)), sg.Push(), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])    
     _choose_modules.append([sg.Button('Cadastrar modulo', button_color=('white', 'green'))])
     _choose_modules.append([sg.VPush()])
     _choose_modules.append([sg.Button('Voltar', button_color=('white','purple'))])
@@ -41,6 +41,7 @@ def show_images(module, tags=None):
         contador = 0
         for product in products:
             code, image, _, inventory = product.values()
+            print(image)
             _images[floor(contador // 3)].append(
                                     sg.Column([
                                         [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
@@ -126,7 +127,7 @@ def adicionar_produtos():
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-  
+
 if __name__ == "__main__":
     window = sg.Window("teste", [[sg.Column(show_images("roupas"), scrollable=True, vertical_scroll_only=True, s=(510,500))]], finalize=True)
     window.read()
