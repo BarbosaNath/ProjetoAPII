@@ -24,13 +24,15 @@ sg.theme("FotoShopping")
 def choose_modules():
     _choose_modules=[
         gerar_botao_logout('modulos'),
-        [sg.Text('Qual tipo de produto irá trabalhar?')]]
+        [sg.Text('Qual tipo de produto irá trabalhar?')]
+    ]
 
     for module in mod.get_all_modules():
-        _choose_modules.append([Botao(module.capitalize(), 'modulos',  f'modulo_{module}'), sg.Push(), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])    
-    _choose_modules.append([sg.Button('Cadastrar modulo', button_color=('white', 'green'))])
+        _choose_modules.append([Botao(module.capitalize(), 'modulos',  f'modulo_{module}', s=20), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])    
+
+    # _choose_modules.append([sg.Sizer(v_pixels=300)])
     _choose_modules.append([sg.VPush()])
-    _choose_modules.append([sg.Button('Voltar', button_color=('white','purple'))])
+    _choose_modules.append([sg.Button('Cadastrar Modulo', button_color=('white', 'green'), s=17), sg.Button('Voltar', button_color=('white','purple'), s=5)])
     return _choose_modules
 
 # --------------------------------------------------------------------------------------------------------------------------#
@@ -76,8 +78,8 @@ def modules():
                         )] ]
 
         _modules[module] += [   [sg.Push()],
-                                [sg.Button("Pesquisar")],
-                                [Botao('Menu Principal',  f'modulo_{module}', 'modulos')]
+                                [sg.Button("Pesquisar", key=("botao_pesquisar_module", module), s=17), Botao('Voltar',  f'modulo_{module}', 'modulos', s=5)],
+                                []
                             ]
     return _modules
 
@@ -93,10 +95,9 @@ def cadastro_modulo():
         _cadastro_modulo.append([sg.Checkbox(group.replace('_', ' ').capitalize(), key=f'checkbox_tag_{group}')])
 
     _cadastro_modulo+=[
-        [sg.Button('Cadastrar filtro')],
+        #[sg.Button('Cadastrar filtro')],
         [sg.VPush()],
-        [sg.Button('Criar', key='submit_cadastro_modulo', button_color=('white', 'green'))],
-        [sg.Button('Menu Principal', key='inicio')]
+        [sg.Button('Criar', key='submit_cadastro_modulo', button_color=('white', 'green'), s=17), sg.Button('Voltar', key='inicio', s=5)]
     ]
     return _cadastro_modulo  
 
@@ -107,9 +108,9 @@ def adicionar_produtos():
         _adicionar_produtos[module]=[
             gerar_botao_logout(f'adicionar_produto_{module}'),
             [sg.Text(f'Adicione {module}:')],
-            [sg.Text('Codigo:'), sg.Input(key="product_code")],
-            [sg.Text('Foto:'), sg.FileBrowse("Imagem", key="file_image")],
-            [sg.Text('Estoque:'), sg.Input(key="product_inventory")],
+            [sg.Text('Codigo:' , s=6), sg.Input(key="product_code", s=16)],
+            [sg.Text('Foto:'   , s=6), sg.FileBrowse("Imagem", key="file_image")],
+            [sg.Text('Estoque:', s=6), sg.Input(key="product_inventory", s=16)],
             [sg.VPush()],
             [sg.Text('Atribua filtros a esse produto:')]]
         for group in tags.get_all_groups():
@@ -118,9 +119,7 @@ def adicionar_produtos():
                 for tag in tags.get_tag_group(group):
                     tag=tag[0]
                     _adicionar_produtos[module].append([sg.Text(s=2), sg.Checkbox(tag.replace('_', " ").capitalize(), key=f"checkbox_cadastro_{module}_{group}_{tag}")])
-        _adicionar_produtos[module].append([sg.Button('Adicionar', key=("button_add_product", module))])
-        
-        _adicionar_produtos[module].append([Botao("Voltar", f"adicionar_produto_{module}", "modulos")])
+        _adicionar_produtos[module].append([sg.Button('Adicionar', key=("button_add_product", module), s= 17), Botao("Voltar", f"adicionar_produto_{module}", "modulos", s=5)])
         
     return _adicionar_produtos
 

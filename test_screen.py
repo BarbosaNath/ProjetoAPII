@@ -57,9 +57,8 @@ window.bring_to_front()
 while True:
     event, values = window.read()
 
-    if event == sg.WIN_CLOSED or event == "buton_cancel_login": break
-
-    if   event == 'Cadastrar modulo':         swap_screens(window, 'modulos',           'cadastro_modulo')
+    if   event == sg.WIN_CLOSED or event == "buton_cancel_login": break
+    elif event == 'Cadastrar Modulo':         swap_screens(window, 'modulos',           'cadastro_modulo')
     elif event == 'inicio':                   swap_screens(window, 'cadastro_modulo',   'modulos')
     elif event == 'Produtos':                 swap_screens(window, 'tela_inicial',      'modulos')
     elif event == 'Voltar':                   swap_screens(window, 'modulos',           'tela_inicial')

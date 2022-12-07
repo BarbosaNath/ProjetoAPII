@@ -10,7 +10,8 @@ def swap_columns(window, column1, column2, column3=None):
 
 trocar_tela  = lambda window, x, y: swap_columns(window, x, y, 'col_central')
 swap_screens = lambda window, x, y: swap_columns(window, x, y, 'col_central')
-Botao        = lambda   name, x, y: sg.Button(name, k=lambda window: trocar_tela(window, x, y))
+# Botao        = lambda   name, x, y: sg.Button(name, k=lambda window: trocar_tela(window, x, y))
+Botao        = lambda   name, x, y, **kwargs: sg.Button(name, k=lambda window: trocar_tela(window, x, y), **kwargs)
 
 def gerar_botao_logout(current_column):
     return [sg.Image(filename=resize('icone.png',0.1)), sg.Button('Log Out', key=lambda window: trocar_tela(window, current_column, 'tela_login') , button_color=('white','purple'))]
