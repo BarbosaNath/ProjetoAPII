@@ -43,8 +43,9 @@ def generate_layout(first_screen):
     mods = modules()
     prod = adicionar_produtos()
 
+
     for module in mods:
-        # layout[0] += [Column(show_images(module), key=f'imagens_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
+        layout[0] += [Column(show_images(module), key=f"images_{module}", scrollable=True, vertical_scroll_only=True, s=(510,500), visible=False)]
         layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
         layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
 
@@ -126,6 +127,7 @@ while True:
 
 
             db.add_to_db("database/modules.db", event[1], dados)
+
             swap_columns(window, f"adicionar_produto_{event[1]}", f"modulo_{event[1]}", "col_central")
 
 
@@ -134,6 +136,10 @@ while True:
             window["file_image"]('Imagem')
             window['product_inventory']('')
             
+
+        elif event[0] == "modulo_escolhido":
+            swap_columns(window, "modulos", f"modulo_{event[1]}")
+            swap_columns(window, "col_central", f"images_{event[1]}")
 
     elif event == "submit_create_acc":
         sg.popup("Conta Criada")

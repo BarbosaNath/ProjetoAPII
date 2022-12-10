@@ -43,6 +43,7 @@ def show_images(module):
         contador = 0
         for product in products:
             code, image, _, inventory = product.values()
+            print(image)
             _images[floor(contador // 3)].append(
                                     sg.Column([
                                         [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
@@ -125,7 +126,7 @@ def adicionar_produtos():
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-  
+
 if __name__ == "__main__":
     window = sg.Window("teste", [[sg.Column(show_images("roupas"), scrollable=True, vertical_scroll_only=True, s=(510,500))]], finalize=True)
     window.read()
