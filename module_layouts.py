@@ -28,7 +28,7 @@ def choose_modules():
     ]
 
     for module in mod.get_all_modules():
-        _choose_modules.append([Botao(module.capitalize(), 'modulos',  f'modulo_{module}', s=20), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])    
+        _choose_modules.append([sg.Button(module.capitalize(), k=("modulo_escolhido", module), s=20), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])
 
     # _choose_modules.append([sg.Sizer(v_pixels=300)])
     _choose_modules.append([sg.VPush()])
