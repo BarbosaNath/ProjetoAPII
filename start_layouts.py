@@ -26,10 +26,10 @@ def tela_login():
 
 def tela_inicial():
     return [
-        [sg.Text('Bem Vindo!')],
         [sg.Image(filename=resize('icone.png',0.1)), sg.Button('Log Out', key='sair', button_color=('white','purple'))],
-        [sg.Button('Módulos', s=10, k='Produtos')],
-        [sg.Button('Campos',  s=10, k='Consultar Filtros')],
+        [sg.Sizer(v_pixels=50)],
+        [sg.Button('Módulos', s=24, k='Produtos')],
+        [sg.Button('Filtros',  s=24, k='Consultar Filtros')],
         # [sg.Button('Cadastrar Filtro')],
     ]
 #-------------------------------------------------------------------------------------------------------

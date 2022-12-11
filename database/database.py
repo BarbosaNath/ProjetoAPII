@@ -192,6 +192,7 @@ def remove_element_where(database_file, table_name, where_what, equals):
     cursor = con.cursor()
 
     command = f"DELETE FROM {table_name} WHERE {where_what} = ?"
+    print(command)
     cursor.execute(command, [equals])
 
     con.commit()

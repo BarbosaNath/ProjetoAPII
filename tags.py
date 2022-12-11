@@ -12,6 +12,8 @@ def create_tag_group(tag_group_name):
 def remove_tag_group(tag_group_name):
     db.remove_table("database/tag_groups.db", tag_group_name)
 
+def remove_tag(tag_group_name, tag):
+    db.remove_element_where("database/tag_groups.db", tag_group_name, "tag", tag)
 
 def get_tag_group(tag_group_name):
     return db.get_table("database/tag_groups.db", tag_group_name)

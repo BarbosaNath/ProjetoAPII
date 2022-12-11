@@ -28,7 +28,7 @@ def choose_modules():
     ]
 
     for module in mod.get_all_modules():
-        _choose_modules.append([sg.Button(module.capitalize(), k=("modulo_escolhido", module), s=20), sg.Button("❌", s=(2,1), key=("modules_reset_screen", lambda: mod.remove_module(module)), button_color=("white", "darkred"))])
+        _choose_modules.append([sg.Button(module.capitalize(), k=tuple(("modulo_escolhido", module)), s=20), sg.Button("❌", s=(2,1), key=tuple(("modules_reset_screen", lambda: mod.remove_module(module))), button_color=("white", "darkred"))])
 
     # _choose_modules.append([sg.Sizer(v_pixels=300)])
     _choose_modules.append([sg.VPush()])
@@ -64,23 +64,21 @@ def modules():
         _modules[module]=[
         gerar_botao_logout(f'modulo_{module}'),
         [sg.Push()],
-        [Botao(f'Adicionar {module.capitalize()}', f'modulo_{module}', f'adicionar_produto_{module}')],
         [sg.Text('Filtros:', size=(10,1))]]
 
         for group in tags.get_all_groups():
             if (group in mod.get_tags(module)):
                 _modules[module] += [ 
-                    [sg.Text(group.replace('_', ' ').capitalize())],
-                    [sg.Combo(
+                    [sg.Text("    " + group.replace('_', ' ').capitalize())],
+                    [sg.T("    "), sg.Combo(
                         [tag[0].replace('_', ' ').capitalize() for tag in tags.get_tag_group(group)],
                         s=(15, 22),
                         enable_events=True,
                         readonly=True,
                         )] ]
 
-        _modules[module] += [   [sg.Push()],
-                                [sg.Button("Pesquisar", key=("botao_pesquisar_module", module), s=17), Botao('Voltar',  f'modulo_{module}', 'modulos', s=5)],
-                                []
+        _modules[module] += [   [sg.Button("Pesquisar", key=tuple(("botao_pesquisar_module", module)), s=25)],
+                                [sg.Button(f'Adicionar {module.capitalize()}', key=tuple(("ir_add_product", module)), button_color=("white", "green"), s=17), sg.Button('Voltar',  key=tuple(("voltar_para_choose_modules", module)), s=5)],
                             ]
     return _modules
 
@@ -120,7 +118,7 @@ def adicionar_produtos():
                 for tag in tags.get_tag_group(group):
                     tag=tag[0]
                     _adicionar_produtos[module].append([sg.Text(s=2), sg.Checkbox(tag.replace('_', " ").capitalize(), key=f"checkbox_cadastro_{module}_{group}_{tag}")])
-        _adicionar_produtos[module].append([sg.Button('Adicionar', key=("button_add_product", module), s= 17), Botao("Voltar", f"adicionar_produto_{module}", "modulos", s=5)])
+        _adicionar_produtos[module].append([sg.Button('Adicionar', key=tuple(("button_add_product", module)), s= 17), sg.Button("Voltar", key=tuple(("voltar_do_add_produtos", module)), s=5)])
         
     return _adicionar_produtos
 

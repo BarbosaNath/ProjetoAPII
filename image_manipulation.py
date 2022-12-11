@@ -4,6 +4,15 @@ import os
 from math import ceil
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+def convert_to_png(image):
+    if ".png" in image: return image
+
+    img_png = Image.open(image) 
+    img_png.save(image.replace(".jpg", ".png"))
+
+    return image.replace(".jpg", ".png")
+    
+
 # eu so queria que tivesse um overload de verdade no python T-T
 def resize(path, size, size_=None) -> str: 
     image_name = path.replace(".png", "").split("/")[-1]

@@ -5,6 +5,8 @@ import modules as mod
 from   functions import *
 import database.database as db
 
+import sqlite3
+
 from filters_layouts import *
 from module_layouts  import *
 from start_layouts   import *
@@ -29,14 +31,15 @@ loading = lambda: sg.popup_no_buttons('Carregando...', auto_close = True, auto_c
 
 def generate_layout(first_screen):
     layout=[ [
-            Column(tela_login(),        key='tela_login',        s=(210,500), visible=first_screen=="tela_login"       ),
-            Column(tela_inicial(),      key='tela_inicial',      s=(210,500), visible=first_screen=="tela_inicial"     ),
-            Column(choose_modules(),    key='modulos',           s=(210,500), visible=first_screen=="modulos"           ),
-            Column(cadastro_modulo(),   key='cadastro_modulo',   s=(210,500), visible=first_screen=="cadastro_modulo"  ),
-            # Column(cadastrar_filtros(), key='cadastrar_filtros', s=(210,500), visible=first_screen=="cadastrar_filtros"),
-            Column(filtros(),           key='consultar_filtros', s=(210,500), visible=first_screen=="consultar_filtros", scrollable=True, vertical_scroll_only=True), 
-            Column(create_acc(),        key='create_acc',        s=(210,500), visible=first_screen=="create_acc"       ),
-            Column(layout_central(),    key='col_central',                    visible=True)
+            Column(tela_login(),              key='tela_login',                  s=(210,500), visible=first_screen=="tela_login"),
+            Column(tela_inicial(),            key='tela_inicial',                s=(210,500), visible=first_screen=="tela_inicial"),
+            Column(choose_modules(),          key='modulos',                     s=(210,500), visible=first_screen=="modulos"),
+            Column(cadastro_modulo(),         key='cadastro_modulo',             s=(210,500), visible=first_screen=="cadastro_modulo"),
+            Column(cadastrar_grupo_filtros(), key='tela_cadastrar_grupo_filtro', s=(210,500), visible=first_screen=="tela_cadastrar_grupo_filtro"),
+            Column(cadastrar_filtro(),        key='tela_cadastrar_filtro',       s=(210,500), visible=first_screen=="tela_cadastrar_filtro"),
+            Column(filtros(),                 key='consultar_filtros',           s=(210,500), visible=first_screen=="consultar_filtros", scrollable=True, vertical_scroll_only=True), 
+            Column(create_acc(),              key='create_acc',                  s=(210,500), visible=first_screen=="create_acc"),
+            Column(layout_central(),          key='col_central', visible=True)
         ]
     ]
 
@@ -45,10 +48,9 @@ def generate_layout(first_screen):
 
 
     for module in mods:
-        layout[0] += [Column(show_images(module), key=f"images_{module}", scrollable=True, vertical_scroll_only=True, s=(510,500), visible=False)]
+        layout[0] += [Column([[sg.VerticalSeparator(), Column(show_images(module), s=(600, 600))]], key=f"images_{module}", scrollable=True, vertical_scroll_only=True, s=(607,606), visible=False)]
         layout[0] += [Column(mods[module], key=f'modulo_{module}', s=(210,500), visible=False)]
         layout[0] += [Column(prod[module], key=f'adicionar_produto_{module}', scrollable=True, vertical_scroll_only=True, s=(210,500), visible=False)]
-
     return layout
 
 loading()
@@ -98,6 +100,7 @@ while True:
         window.bring_to_front()
 
 
+    # ===============================================================
     elif type(event) == tuple:
         if event[0] == 'modules_reset_screen':
             if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
@@ -108,7 +111,54 @@ while True:
             window.close()
             window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
             window.bring_to_front()
+            
 
+        elif event[0] == "delete_filter_group":
+            if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
+
+            tags.remove_tag_group(event[1])
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("consultar_filtros"), finalize=True)
+            window.bring_to_front()
+
+
+        elif event[0] == "delete_filter":
+            if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
+
+            tags.remove_tag(event[1], f"'{event[2]}'")
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("consultar_filtros"), finalize=True)
+            window.bring_to_front()
+
+
+        elif event[0] == "adicionar_ao_grupo":
+            tag = sg.popup_get_text("Digite o nome do novo filtro:")
+            if tag is None: continue
+            if tag == "":
+                sg.popup_no_buttons(f"Filtro não pode ser vazio!", background_color = "red", auto_close = True, auto_close_duration = 1, no_titlebar = True, keep_on_top = True)
+                continue
+
+            try:
+                tags.add_tags_to_group(event[1], tag)
+            except sqlite3.IntegrityError:
+                sg.popup_no_buttons(f"Filtro {tag} já existe!", background_color = "red", auto_close = True, auto_close_duration = 1, no_titlebar = True, keep_on_top = True)
+                continue
+
+            tags.create_tag_group(values["create_new_tag_group_name"].lower().replace(" ", "_"))
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("consultar_filtros"), finalize=True)
+            window.bring_to_front()
+
+            sg.popup_no_buttons(f"Grupo {values['create_new_tag_group_name']} criado com sucesso", background_color="green", auto_close = True, auto_close_duration = .5, no_titlebar = True, keep_on_top = True)
+            window.bring_to_front()
+
+            window['create_new_tag_group_name']('')
 
         elif event[0] == "button_add_product":
             dados = {
@@ -119,11 +169,13 @@ while True:
             }
 
             for group in mod.get_tags(event[1]):
-                for tag in tags.get_tag_group(group):
-                    tag = tag[0]
-                    if values[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]:
-                        dados["tags"] += f"{group}->{tag} "
-                        window[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]('')
+                try:
+                    for tag in tags.get_tag_group(group):
+                        tag = tag[0]
+                        if values[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]:
+                            dados["tags"] += f"{group}->{tag} "
+                            window[f"checkbox_cadastro_{event[1]}_{group}_{tag}"]('')
+                except: pass
 
 
             db.add_to_db("database/modules.db", event[1], dados)
@@ -140,6 +192,35 @@ while True:
         elif event[0] == "modulo_escolhido":
             swap_columns(window, "modulos", f"modulo_{event[1]}")
             swap_columns(window, "col_central", f"images_{event[1]}")
+
+        elif event[0] == "voltar_para_choose_modules":
+            swap_columns(window, f"modulo_{event[1]}", "modulos")
+            swap_columns(window, f"images_{event[1]}", "col_central")
+        
+        elif event[0] == "voltar_do_add_produtos": 
+            swap_columns(window, f"adicionar_produto_{event[1]}", f'modulo_{event[1]}')
+            swap_columns(window, "col_central", f"images_{event[1]}")
+
+        elif event[0] == "ir_add_product":
+            swap_columns(window, f'modulo_{event[1]}', f'adicionar_produto_{event[1]}')
+            swap_columns(window, "col_central", f"images_{event[1]}")
+        
+
+
+    elif event == "botao_adicionar_grupo":
+        group = sg.popup_get_text("Digite o nome do novo Grupo de Filtros:")
+        if group is None: continue
+        if group == "":
+            sg.popup_no_buttons(f"Grupo de Filtros não pode ser vazio!", background_color = "red", auto_close = True, auto_close_duration = 1, no_titlebar = True, keep_on_top = True)
+            continue
+
+        tags.create_tag_group(group)
+
+        loading()
+        window.close()
+        window = sg.Window('Foto Shopping', generate_layout("consultar_filtros"), finalize=True)
+        window.bring_to_front()
+
 
     elif event == "submit_create_acc":
         sg.popup("Conta Criada")

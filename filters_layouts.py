@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 from image_manipulation import resize
 import tags
-from functions import gerar_botao_logout
+from functions import gerar_botao_logout, Botao
 
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
@@ -24,51 +24,41 @@ def filtros():
     ]
 
     for group in tags.get_all_groups():
-        _filtros.append([sg.Text(group.capitalize()), sg.Push(), sg.Button('✏️'), sg.Button('❌', button_color=('white', 'darkred'))])
+        _filtros.append([sg.Text(group.capitalize()), sg.Push(), sg.Button('➕', k=("adicionar_ao_grupo", group)), sg.Button("❌", key=tuple(("delete_filter_group", group)), button_color=('white', 'darkred'))])
         for tag in tags.get_tag_group(group):
             tag=tag[0]
-            _filtros.append([sg.Text('     '+tag.capitalize(), s=10), sg.Push(), sg.Button('✏️'), sg.Button('❌', button_color=('white', 'darkred'))])
-    _filtros.append([sg.Button('Voltar')])
+            _filtros.append([sg.Text('    ▸ '+tag.capitalize(), s=10), sg.Push(), sg.Button('⌫', key=tuple(("delete_filter", group, tag)), button_color=('white', 'darkred'))])
+    _filtros.append([sg.Button('Adicionar grupo de filtros', k="botao_adicionar_grupo", button_color=('white', 'green'), s=24)])
+    _filtros.append([Botao('Voltar', 'consultar_filtros', 'tela_inicial', s=24)])
     return _filtros
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-def cadastrar_filtros():
-    _cadastrar_filtros=[
-        gerar_botao_logout('cadastrar_filtros'),
-        [sg.Text('Qual grupos de filtros deseja criar?')],
-        [sg.Text('Grupo:'), sg.Input(s=15)],
+def cadastrar_grupo_filtros():
+    _cadastrar_grupo_filtros=[
+        gerar_botao_logout('cadastrar_grupo_filtros'),
+        [sg.Text('Qual grupo de filtros deseja criar?')],
+        [sg.Text('Grupo:'), sg.Input(s=15, key="create_new_tag_group_name")],
         [sg.VPush()],
-        [sg.Text('Defina os filtros a serem ultilizados:')],
-        [sg.Text('Filtro:'), sg.Input(s=15)],
-        [sg.Button('Adicionar')],
-        [sg.VPush()],
-        [sg.Button('Criar Grupo', button_color=('white', 'green'))],
-        [sg.VPush()],
-        [sg.Button('Menu Principal', key='frente')]
+        [sg.Button('Adicionar', key="submit_create_tag_group", button_color=('white', 'green'), s=17), Botao('Voltar', "tela_cadastrar_grupo_filtro", "consultar_filtros", s=5)]
     ]
-    return _cadastrar_filtros
+    return _cadastrar_grupo_filtros
 
 # --------------------------------------------------------------------------------------------------------------------------#
 
-def consultar_filtros():
-    _consultar_filtros=[
-        gerar_botao_logout('consultar_filtros'),
-        [sg.Text('Filtros disponiveis:')],
-        [sg.Combo(
-                    tags.get_all_groups(),
-                    s=(15, 22),
-                    enable_events=True,
-                    readonly=True,
-                    k='all_tags',
-                ),
-        ],
-        [sg.Push()],
-        [sg.Button('Editar Filtros')],
-        [sg.Push()],
-        [sg.Button('Voltar', key='retornar')]
+def cadastrar_filtro():
+    _cadastrar_filtro=[
+        gerar_botao_logout('cadastrar_filtro'),
+        [sg.Text('Selecione o grupo de deseja adicionar um filtro:')],
+        [sg.Text('Grupo:'), sg.Combo( tags.get_all_groups(), k="combo_cadastro_filtro", s=(15, 22), enable_events=True, readonly=True)],
+        [sg.VPush()],
+        [sg.Text('Qual filtro deseja adicionar a esse grupo?')],
+        [sg.Input(s=15, k="nome_novo_filtro")],
+        [sg.VPush()],
+        [sg.Button('Adicionar', key="submit_cadastro_filtro", button_color=('white', 'green'), s=17), Botao('Voltar', "tela_cadastrar_filtro", "consultar_filtros", s=5)]
     ]
-    return _consultar_filtros
+    return _cadastrar_filtro
+
 # --------------------------------------------------------------------------------------------------------------------------#
 
 def editar_filtros(): 
