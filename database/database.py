@@ -52,14 +52,12 @@ def remove_table(database_file, table_name):
     con.close()
 
 
-def edit_element(database_file, table_name, what, to, where):
+def edit_element(database_file, table_name, what, to, where, equals):
     con = sqlite3.connect(database_file)
     cursor = con.cursor()
     
-    cursor.execute(f""" UPDATE {table_name}
-                        SET {what} = {to}
-                        WHERE {where};
-                    """)
+    command = f"""UPDATE {table_name} SET {what} = {to} WHERE {where} = ?"""
+    cursor.execute(command, [equals])
 
     con.commit()
     con.close()
@@ -68,6 +66,7 @@ def edit_element(database_file, table_name, what, to, where):
 def format_if_str(value):
     """Format a value to the correct SQL type 'string' if it is a str"""
     return str(value) if type(value) != str else f"'{value}'"
+
 
 def reformat_if_str(value):
     """Format a value in the SQL type 'string' to the python str"""
@@ -218,15 +217,16 @@ create_table("database/test.db", "usuario", [
 
 # __main__ ------------------------------------------------------------------------------
 if __name__ == "__main__":
-    db = "database/test.db"
-    tab = "usuario"
+    db = "database/modules.db"
+    tab = "modules"
     # print(get_column_details("database/test.db", "usuario"))
     # print(get_column_names("database/test.db", "usuario"
     # print(get_table_as_dict("database/test.db", "usuario", "id"))
 
-    print(f"{get_all_tables(db)             =  }")
-    print(f"{get_table(db, tab)[0]          =  }")
-    print(f"{get_column_details(db, tab)[0:2] =  }")
-    print(f"{get_column_names(db, tab)[0:2]   =  }")
+    print_table(db, tab)
+    # print(f"{get_all_tables(db)             =  }")
+    # print(f"{get_table(db, tab)[0]          =  }")
+    # print(f"{get_column_details(db, tab)[0:2] =  }")
+    # print(f"{get_column_names(db, tab)[0:2]   =  }")
 
     pass

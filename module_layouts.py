@@ -5,6 +5,7 @@ from math import floor
 from image_manipulation import resize
 from functions import *
 
+# Tema do Projeto
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
                                         'TEXT':       '#000000',
@@ -47,8 +48,8 @@ def show_images(module):
             _images[floor(contador // 3)].append(
                                     sg.Column([
                                         [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
-                                        [sg.Checkbox(f"Codigo: {code}"),sg.P(), sg.Button("❌", button_color=("white", "darkred"))],
-                                        [sg.T(f"Em Estoque: {inventory}"), sg.P(), sg.Button("✏️")],
+                                        [sg.Checkbox(f"Codigo: {code}"),sg.P(), sg.Button("❌", k=("deletar_produto_estoque", module, code), button_color=("white", "darkred"))],
+                                        [sg.T(f"Em Estoque: {inventory}"), sg.P(), sg.Button("✏️", k=(f"editar_estoque", module, code))],
                                         ], k=f"image_{module}_{code}"))
             contador += 1
             if contador % 3 == 0:
@@ -78,10 +79,11 @@ def modules():
                 _modules[module] += [ 
                     [sg.Text("▸ " + group.replace('_', ' ').capitalize() + ":", s=10), sg.Combo(
                         [tag[0].replace('_', ' ').capitalize() for tag in tags.get_tag_group(group)],
-                        s=13,
+                        s=10,
                         enable_events=True,
                         readonly=True,
-                        )] ]
+                        k=f"combo_{module}_{group}"
+                        ), sg.Button("❌", size=(1,2), font="arial 6", k=("remover_grupo_de_modulo", module, group), button_color=("white", "darkred"))] ]
 
         _modules[module] += [   
                                 [sg.Sizer(v_pixels=25)],
@@ -95,11 +97,11 @@ def modules():
 def popup_select_new_tag_group():
     layout = [
         [sg.Text("")],
-        [sg.Combo(tags.get_all_groups(), size=(20,5), key='SELECTED')],
+        [sg.Combo(tags.get_all_groups(), size=(20,5), key='SELECTED', readonly=True)],
         [sg.Button('Adicionar', button_color=("white", "green")), sg.Button("Cancelar")],
     ]
     
-    window = sg.Window('POPUP', layout).Finalize()
+    window = sg.Window('', layout).Finalize()
     
     event, values = window.read()
 

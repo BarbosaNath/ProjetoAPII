@@ -11,6 +11,7 @@ from filters_layouts import *
 from module_layouts  import *
 from start_layouts   import *
 
+# TODO: ADICIONAR ROUPA TA BUGANDO TELA
 
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
                                         'BACKGROUND': '#f6fcff',
@@ -111,7 +112,32 @@ while True:
             window.close()
             window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
             window.bring_to_front()
-            
+
+        elif event[0] == "botao_pesquisar_module":
+            products = mod.get_module(event[1])
+
+
+            for code in products: 
+                window[f'image_{event[1]}_{code}'].update(visible=True)
+                for group in mod.get_tags(event[1]):
+                    for tag in tags.get_tag_group(group):
+                        tag = tag[0]
+                        if f"{group}->{tag}" not in products[code]["tags"] and values[f"combo_{event[1]}_{group}"] == tag:
+                            window[f'image_{event[1]}_{code}'].update(visible=False)
+                
+
+        elif event [0] == 'deletar_produto_estoque':
+            if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
+
+            mod.remove_product(event[1], event[2])
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout(f"modulos"), finalize=True)
+            window.bring_to_front()
+
+            swap_columns(window, f"modulos", f"modulo_{event[1]}")
+            swap_columns(window, "col_central", f"images_{event[1]}")
 
 
 
@@ -182,13 +208,13 @@ while True:
 
             db.add_to_db("database/modules.db", event[1], dados)
 
-            swap_columns(window, f"adicionar_produto_{event[1]}", f"modulo_{event[1]}", "col_central")
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
+            window.bring_to_front()
 
-
-            window['product_code']('')
-            window["file_image"].InitialFolder = r"C:\\"
-            window["file_image"]('Imagem')
-            window['product_inventory']('')
+            swap_columns(window, f"modulos", f"modulo_{event[1]}")
+            swap_columns(window, "col_central", f"images_{event[1]}")
             
 
         elif event[0] == "modulo_escolhido":
@@ -210,7 +236,28 @@ while True:
         elif event[0] == "adicionar_grupo_a_modulo":
             new_group = popup_select_new_tag_group()
             if new_group is None: continue
-            print(new_group)
+            mod.add_tag_group(event[1], new_group.replace(" ", "_").lower())
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
+            window.bring_to_front()
+
+            swap_columns(window, f"modulos", f"modulo_{event[1]}")
+            swap_columns(window, "col_central", f"images_{event[1]}")
+
+        elif event[0] == "remover_grupo_de_modulo":
+            if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
+
+            mod.remove_tag_group(event[1], event[2].replace(" ", "_").lower())
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
+            window.bring_to_front()
+
+            swap_columns(window, f"modulos", f"modulo_{event[1]}")
+            swap_columns(window, "col_central", f"images_{event[1]}")
 
 
     elif event == "botao_adicionar_grupo":
@@ -227,7 +274,6 @@ while True:
         window = sg.Window('Foto Shopping', generate_layout("consultar_filtros"), finalize=True)
         window.bring_to_front()
 
-
     elif event == "submit_create_acc":
         sg.popup("Conta Criada")
 
@@ -237,7 +283,6 @@ while True:
             "user": values['create_user'],
             "password": values['create_password']
         })
-        
 
     elif callable(event): event(window)
     

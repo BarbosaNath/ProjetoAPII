@@ -24,6 +24,7 @@ def remove_module(module_name):
 def get_module(module_name, image=False):
     return db.get_table_as_dict(db_path, module_name, 'code' if not image else 'image')
 
+# TODO: REMOVER PRODUTO
 # TODO: ADICIONAR TAG GROUP A MODULO
 # TODO: REMOVER TAG GROUP DO MODULO
 
@@ -41,6 +42,17 @@ def add_product(module, code, image, tags, inventory):
         'inventory': inventory
         })
 
+def remove_product(module_name, code): 
+    db.remove_element_where(db_path, module_name, "code", f"'{code}'")
+
+def add_tag_group(module, group):
+    new_tag_groups = " ".join(get_tags(module)) + " " + group
+    db.edit_element(db_path, 'modules', "tag_groups", f"'{new_tag_groups}'", f"name", f"'{module}'")
+
+def remove_tag_group(module, group):
+    new_tag_groups = " ".join(get_tags(module)).replace(f"{group}", "")
+    db.edit_element(db_path, 'modules', "tag_groups", f"'{new_tag_groups}'", f"name", f"'{module}'")
+
 def decreace_inventory(module_name, code):
     db.edit_element(db_path, module_name, 'inventory', db.get_table_as_dict(db_path, module_name, 'code')[code]['inventory']-1, f'code = {code}')
 
@@ -53,6 +65,8 @@ def change_inventory(module_name, code, inventory):
 
 
 if __name__ == '__main__':
-    create_module('roupas', 'tamanho cor')
-    create_module('perfumes', 'tamanho')
-    create_module('esmaltes', 'cor')
+    # create_module('roupas', 'tamanho cor')
+    # create_module('perfumes', 'tamanho')
+    # create_module('esmaltes', 'cor')
+
+    get_tags("roupas")
