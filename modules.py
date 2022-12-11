@@ -24,6 +24,9 @@ def remove_module(module_name):
 def get_module(module_name, image=False):
     return db.get_table_as_dict(db_path, module_name, 'code' if not image else 'image')
 
+# TODO: ADICIONAR TAG GROUP A MODULO
+# TODO: REMOVER TAG GROUP DO MODULO
+
 def edit_module(module_name, what, to, where):
     db.edit_element(db_path, module_name, what, to, where)
 

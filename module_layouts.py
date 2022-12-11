@@ -69,18 +69,39 @@ def modules():
         for group in tags.get_all_groups():
             if (group in mod.get_tags(module)):
                 _modules[module] += [ 
-                    [sg.Text("    " + group.replace('_', ' ').capitalize())],
-                    [sg.T("    "), sg.Combo(
+                    [sg.Text("▸ " + group.replace('_', ' ').capitalize() + ":", s=10), sg.Combo(
                         [tag[0].replace('_', ' ').capitalize() for tag in tags.get_tag_group(group)],
-                        s=(15, 22),
+                        s=13,
                         enable_events=True,
                         readonly=True,
                         )] ]
 
-        _modules[module] += [   [sg.Button("Pesquisar", key=tuple(("botao_pesquisar_module", module)), s=25)],
+        _modules[module] += [   
+                                [sg.Sizer(v_pixels=25)],
+                                [sg.Button("Pesquisar", key=tuple(("botao_pesquisar_module", module)), s=25)],
+                                [sg.Sizer(v_pixels=25)],
+                                [sg.Button("Adicionar Grupo de Filtros", key=("adicionar_grupo_a_modulo", module), button_color=("white", "green"),  s=25)],
                                 [sg.Button(f'Adicionar {module.capitalize()}', key=tuple(("ir_add_product", module)), button_color=("white", "green"), s=17), sg.Button('Voltar',  key=tuple(("voltar_para_choose_modules", module)), s=5)],
                             ]
     return _modules
+
+def popup_select_new_tag_group():
+    layout = [
+        [sg.Text("")],
+        [sg.Combo(tags.get_all_groups(), size=(20,5), key='SELECTED')],
+        [sg.Button('Adicionar', button_color=("white", "green")), sg.Button("Cancelar")],
+    ]
+    
+    window = sg.Window('POPUP', layout).Finalize()
+    
+    event, values = window.read()
+
+    if event == sg.WINDOW_CLOSED or event == "Cancelar":
+        window.close()
+        return
+    elif event == 'Adicionar':
+        window.close()
+        return values['SELECTED']
 
 # --------------------------------------------------------------------------------------------------------------------------#
 def cadastro_modulo():

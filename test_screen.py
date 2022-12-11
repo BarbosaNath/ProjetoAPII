@@ -113,6 +113,8 @@ while True:
             window.bring_to_front()
             
 
+
+
         elif event[0] == "delete_filter_group":
             if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
 
@@ -196,7 +198,7 @@ while True:
         elif event[0] == "voltar_para_choose_modules":
             swap_columns(window, f"modulo_{event[1]}", "modulos")
             swap_columns(window, f"images_{event[1]}", "col_central")
-        
+
         elif event[0] == "voltar_do_add_produtos": 
             swap_columns(window, f"adicionar_produto_{event[1]}", f'modulo_{event[1]}')
             swap_columns(window, "col_central", f"images_{event[1]}")
@@ -205,6 +207,10 @@ while True:
             swap_columns(window, f'modulo_{event[1]}', f'adicionar_produto_{event[1]}')
             swap_columns(window, "col_central", f"images_{event[1]}")
         
+        elif event[0] == "adicionar_grupo_a_modulo":
+            new_group = popup_select_new_tag_group()
+            if new_group is None: continue
+            print(new_group)
 
 
     elif event == "botao_adicionar_grupo":
