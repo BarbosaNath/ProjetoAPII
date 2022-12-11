@@ -27,7 +27,7 @@ def filtros():
         _filtros.append([sg.Text(group.capitalize()), sg.Push(), sg.Button('➕', k=("adicionar_ao_grupo", group)), sg.Button("❌", key=tuple(("delete_filter_group", group)), button_color=('white', 'darkred'))])
         for tag in tags.get_tag_group(group):
             tag=tag[0]
-            _filtros.append([sg.Text('    ▸ '+tag.capitalize(), s=10), sg.Push(), sg.Button('⌫', key=tuple(("delete_filter", group, tag)), button_color=('white', 'darkred'))])
+            _filtros.append([sg.Text('    ▸ '+tag.capitalize()), sg.Push(), sg.Button('⌫', key=tuple(("delete_filter", group, tag)), button_color=('white', 'darkred'))])
     _filtros.append([sg.Button('Adicionar grupo de filtros', k="botao_adicionar_grupo", button_color=('white', 'green'), s=24)])
     _filtros.append([Botao('Voltar', 'consultar_filtros', 'tela_inicial', s=24)])
     return _filtros
