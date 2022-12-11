@@ -47,11 +47,18 @@ def show_images(module):
             _images[floor(contador // 3)].append(
                                     sg.Column([
                                         [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
-                                        [sg.Checkbox(code), sg.Text(inventory)],
-                                        ]))
+                                        [sg.Checkbox(f"Codigo: {code}"),sg.P(), sg.Button("❌", button_color=("white", "darkred"))],
+                                        [sg.T(f"Em Estoque: {inventory}"), sg.P(), sg.Button("✏️")],
+                                        ], k=f"image_{module}_{code}"))
             contador += 1
             if contador % 3 == 0:
                 _images.append([])
+        # _images[floor(contador // 3)].append(
+        #                         sg.Frame(f"Adicionar {module.replace('_', ' ').capitalize()}",layout=[
+        #                             [sg.VP()],
+        #                             [sg.Column([[sg.P(),sg.Button("+", s=(5, 6), font="arial 30 bold", button_color=("grey","#f6fcff"), border_width=0), sg.P()]], s=(150,300))],
+        #                             [sg.VP()],
+        #                             ], k=f"image_aaa"))
 
         return _images if _images != [] else [[]]
     return image_layout(module)
