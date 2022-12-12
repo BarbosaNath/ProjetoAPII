@@ -1,7 +1,6 @@
 import sqlite3
 import sys
 sys.path.insert(0, './')
-from debug import Log
 
 
 def create_table(database_file, table_name, values, not_exists=True):
@@ -19,7 +18,6 @@ def create_table(database_file, table_name, values, not_exists=True):
         command += f"\t {value}, \n"
     command += f" {values[-1]} \n );"
 
-    print(command)
     cursor.execute(command)
 
     con.commit()
@@ -102,7 +100,6 @@ def add_to_db(database_file, table_name, values: dict):
     # INSERT INTO (column1, column2, ..., columnN-1, columnN) VALUES (?, ?, ..., ?, ?);
 
     # Executa o commando
-    Log(command)
     cursor.execute(command, [format_if_str(item) for item in values.values()])
     con.commit()
     con.close()
@@ -191,7 +188,6 @@ def remove_element_where(database_file, table_name, where_what, equals):
     cursor = con.cursor()
 
     command = f"DELETE FROM {table_name} WHERE {where_what} = ?"
-    print(command)
     cursor.execute(command, [equals])
 
     con.commit()

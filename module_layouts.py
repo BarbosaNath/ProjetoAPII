@@ -54,7 +54,7 @@ def show_images(module):
         _images[floor(contador // 3)].append(
                                 sg.Column([
                                     [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
-                                    [sg.Checkbox(f"Codigo: {code}", key=f"checkbox_{code}"),sg.P(), sg.Button("❌", k=("deletar_produto_estoque", module, code), button_color=("white", "darkred"))],
+                                    [sg.Checkbox(f"Referencia: {code}", key=f"checkbox_{code}"),sg.P(), sg.Button("❌", k=("deletar_produto_estoque", module, code), button_color=("white", "darkred"))],
                                     [sg.T(f"Em Estoque: {inventory}"), sg.P(), sg.Button("✏️", k=(f"editar_estoque", module, code))],
                                     ], k=f"image_{module}_{code}"))
         contador += 1
@@ -88,10 +88,10 @@ def modules():
         _modules[module] += [   
                                 [sg.Sizer(v_pixels=25)],
                                 [sg.Button("Pesquisar", key=tuple(("botao_pesquisar_module", module)), s=25)],
-                                [sg.Button("Compartilhar Imagens Selecionadas", key=("botao_pegar_imagens", module), s=25)],
+                                [sg.Button("Compartilhar Imagens Selecionadas", button_color=("white","purple2"), key=("botao_pegar_imagens", module), s=25)],
                                 [sg.Sizer(v_pixels=25)],
                                 [sg.Button("Adicionar Grupo de Filtros", key=("adicionar_grupo_a_modulo", module), button_color=("white", "green"),  s=25)],
-                                [sg.Button(f'Adicionar {module.capitalize()}', key=tuple(("ir_add_product", module)), button_color=("white", "green"), s=17), sg.Button('Voltar',  key=tuple(("voltar_para_choose_modules", module)), s=5)],
+                                [sg.Button(f'Adicionar {module.capitalize()}', key=tuple(("ir_add_product", module)), button_color=("white", "green"), s=17), sg.Button('Voltar', button_color=("white", "purple"), key=tuple(("voltar_para_choose_modules", module)), s=5)],
                             ]
     return _modules
 
@@ -127,7 +127,7 @@ def cadastro_modulo():
     _cadastro_modulo+=[
         #[sg.Button('Cadastrar filtro')],
         [sg.VPush()],
-        [sg.Button('Criar', key='submit_cadastro_modulo', button_color=('white', 'green'), s=17), sg.Button('Voltar', key='inicio', s=5)]
+        [sg.Button('Criar', key='submit_cadastro_modulo', button_color=('white', 'green'), s=17), sg.Button('Voltar', button_color=("white", "purple"), key='inicio', s=5)]
     ]
     return _cadastro_modulo  
 
@@ -138,9 +138,9 @@ def adicionar_produtos():
         _adicionar_produtos[module]=[
             gerar_botao_logout(f'adicionar_produto_{module}'),
             [sg.Text(f'Adicione {module}:')],
-            [sg.Text('Codigo:' , s=6), sg.Input(key="product_code", s=16)],
-            [sg.Text('Foto:'   , s=6), sg.FileBrowse("Imagem", key="file_image")],
-            [sg.Text('Estoque:', s=6), sg.Input(key="product_inventory", s=16)],
+            [sg.Text('Referencia:' , s=8), sg.Input(key="product_code", s=14)],
+            [sg.Text('Foto:'   , s=8), sg.FileBrowse("Imagem", key="file_image")],
+            [sg.Text('Estoque:', s=8), sg.Input(key="product_inventory", s=14)],
             [sg.VPush()],
             [sg.Text('Atribua filtros a esse produto:')]]
         for group in tags.get_all_groups():
