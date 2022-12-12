@@ -11,6 +11,18 @@ from filters_layouts import *
 from module_layouts  import *
 from start_layouts   import *
 
+import os, subprocess, sys, shutil
+
+# def rmtree(top):
+#     for root, dirs, files in os.walk(top, topdown=False):
+#         for name in files:
+#             filename = os.path.join(root, name)
+#             os.chmod(filename, stat.S_IWUSR)
+#             os.remove(filename)
+#         for name in dirs:
+#             os.rmdir(os.path.join(root, name))
+#     os.rmdir(top)      
+
 # TODO: ADICIONAR ROUPA TA BUGANDO TELA
 
 sg.LOOK_AND_FEEL_TABLE['FotoShopping'] = {
@@ -113,6 +125,27 @@ while True:
             window = sg.Window('Foto Shopping', generate_layout("modulos"), finalize=True)
             window.bring_to_front()
 
+        elif event[0] == "editar_estoque":
+            inventory = sg.popup_get_text(f"Digite o novo estoque de {event[2]}:")
+            if inventory is None: continue
+            if inventory == "":
+                sg.popup_no_buttons(f"Estoque não pode ser vazio!", background_color = "red", auto_close = True, auto_close_duration = 1, no_titlebar = True, keep_on_top = True)
+                continue
+
+            try:
+                mod.change_inventory(event[1], event[2], int(inventory))
+            except:
+                sg.popup_no_buttons(f"Estoque tem que ser um número!", background_color = "red", auto_close = True, auto_close_duration = 1, no_titlebar = True, keep_on_top = True)
+                continue
+
+            loading()
+            window.close()
+            window = sg.Window('Foto Shopping', generate_layout(f"modulos"), finalize=True)
+            window.bring_to_front()
+
+            swap_columns(window, f"modulos", f"modulo_{event[1]}")
+            swap_columns(window, "col_central", f"images_{event[1]}")
+
         elif event[0] == "botao_pesquisar_module":
             products = mod.get_module(event[1])
 
@@ -140,6 +173,24 @@ while True:
             swap_columns(window, "col_central", f"images_{event[1]}")
 
 
+        elif event[0] == "botao_pegar_imagens": 
+            products = mod.get_module(event[1])
+            os.mkdir(dir := './temp')
+            for code in products:
+                if values[f"checkbox_{code}"]:
+                    arquivo = products[code]["image"].split('/')[-1]
+                    shutil.copy2(products[code]["image"], dir+"/"+arquivo)
+            #  sg.popup_get_file("Ctrl+A e arraste as imagens para o whatsapp!", default_path = dir)
+            if "win" in sys.platform: subprocess.Popen(fr'explorer /select,.\temp\{arquivo}')
+            else: os.system("xdg-open ./temp")
+
+            sg.popup("Selecione as imagens e arraste-as para a ferramenta de contato com o cliente!")      
+
+            if "win" in sys.platform: os.system(f'rmdir /Q /S .\\temp')
+            else: os.system(f'rmdir -rf ./temp')
+
+
+            window.bring_to_front()
 
         elif event[0] == "delete_filter_group":
             if sg.popup_yes_no('Deseja mesmo excluir?', no_titlebar=True, grab_anywhere = True) == "No": continue
@@ -175,8 +226,6 @@ while True:
             except sqlite3.IntegrityError:
                 sg.popup_no_buttons(f"Filtro {tag} já existe!", background_color = "red", auto_close = True, auto_close_duration = 1, no_titlebar = True, keep_on_top = True)
                 continue
-
-            tags.create_tag_group(values["create_new_tag_group_name"].lower().replace(" ", "_"))
 
             loading()
             window.close()

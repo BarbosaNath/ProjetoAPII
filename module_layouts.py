@@ -38,31 +38,31 @@ def choose_modules():
 
 # --------------------------------------------------------------------------------------------------------------------------#
 def show_images(module):
-    def image_layout(module):
-        _images = [[]]
-        products = mod.get_module(module).values()
-        contador = 0
-        for product in products:
-            code, image, _, inventory = product.values()
-            print(image)
-            _images[floor(contador // 3)].append(
-                                    sg.Column([
-                                        [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
-                                        [sg.Checkbox(f"Codigo: {code}"),sg.P(), sg.Button("❌", k=("deletar_produto_estoque", module, code), button_color=("white", "darkred"))],
-                                        [sg.T(f"Em Estoque: {inventory}"), sg.P(), sg.Button("✏️", k=(f"editar_estoque", module, code))],
-                                        ], k=f"image_{module}_{code}"))
-            contador += 1
-            if contador % 3 == 0:
-                _images.append([])
-        # _images[floor(contador // 3)].append(
-        #                         sg.Frame(f"Adicionar {module.replace('_', ' ').capitalize()}",layout=[
-        #                             [sg.VP()],
-        #                             [sg.Column([[sg.P(),sg.Button("+", s=(5, 6), font="arial 30 bold", button_color=("grey","#f6fcff"), border_width=0), sg.P()]], s=(150,300))],
-        #                             [sg.VP()],
-        #                             ], k=f"image_aaa"))
+    _images = [[]]
+    products = mod.get_module(module).values()
+    contador = 0
+    # _images[floor(contador // 3)].append(
+    #                         sg.Frame(f"Adicionar {module.replace('_', ' ').capitalize()}",layout=[
+    #                             [sg.VP()],
+    #                             [sg.Column([[sg.P(),sg.Button("+", s=(5, 6), k=("ir_add_product", module), font="arial 30 bold", button_color=("grey","#f6fcff"), border_width=0), sg.P()]], s=(150,300))],
+    #                             [sg.VP()],
+    #                             ]))
+    # contador += 1
+    for product in products:
+        code, image, _, inventory = product.values()
+        print(image)
+        _images[floor(contador // 3)].append(
+                                sg.Column([
+                                    [sg.Column([[sg.Image(resize(image,150,300))]], s=(150,240))],
+                                    [sg.Checkbox(f"Codigo: {code}", key=f"checkbox_{code}"),sg.P(), sg.Button("❌", k=("deletar_produto_estoque", module, code), button_color=("white", "darkred"))],
+                                    [sg.T(f"Em Estoque: {inventory}"), sg.P(), sg.Button("✏️", k=(f"editar_estoque", module, code))],
+                                    ], k=f"image_{module}_{code}"))
+        contador += 1
+        if contador % 3 == 0:
+            _images.append([])
+    
 
-        return _images if _images != [] else [[]]
-    return image_layout(module)
+    return _images if _images != [] else [[]]
 
 
 # --------------------------------------------------------------------------------------------------------------------------#
@@ -88,6 +88,7 @@ def modules():
         _modules[module] += [   
                                 [sg.Sizer(v_pixels=25)],
                                 [sg.Button("Pesquisar", key=tuple(("botao_pesquisar_module", module)), s=25)],
+                                [sg.Button("Compartilhar Imagens Selecionadas", key=("botao_pegar_imagens", module), s=25)],
                                 [sg.Sizer(v_pixels=25)],
                                 [sg.Button("Adicionar Grupo de Filtros", key=("adicionar_grupo_a_modulo", module), button_color=("white", "green"),  s=25)],
                                 [sg.Button(f'Adicionar {module.capitalize()}', key=tuple(("ir_add_product", module)), button_color=("white", "green"), s=17), sg.Button('Voltar',  key=tuple(("voltar_para_choose_modules", module)), s=5)],

@@ -19,7 +19,7 @@ def create_table(database_file, table_name, values, not_exists=True):
         command += f"\t {value}, \n"
     command += f" {values[-1]} \n );"
 
-    Log(command)
+    print(command)
     cursor.execute(command)
 
     con.commit()
