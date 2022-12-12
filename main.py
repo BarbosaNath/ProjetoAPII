@@ -55,7 +55,7 @@ def generate_layout(first_screen):
     return layout
 
 loading()
-window = Window('Foto Shopping', generate_layout("tela_inicial"), finalize=True)
+window = Window('Foto Shopping', generate_layout("tela_login"), finalize=True)
 window.bring_to_front()
 
 while True:
